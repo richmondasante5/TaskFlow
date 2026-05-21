@@ -25,5 +25,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
+    //getting task by Id. This returns one task
+    public Task getTaskById(Long id){
+        return taskRepository.findById(id).orElse(null);
+    }
+
 
 }
