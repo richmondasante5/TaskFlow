@@ -17,6 +17,7 @@ public class Task {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //@Column(nullable=false)//fields cannot be null but keep null for test purposes
     private String taskName;
     private String taskDescription;
     public enum Status{STARTED, COMPLETED, PENDING}

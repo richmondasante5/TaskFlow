@@ -2,11 +2,9 @@ package com.example.TaskFlow.controller;
 
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.TaskRepository;
+import com.example.TaskFlow.repository.UserRepository;
 import com.example.TaskFlow.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +24,17 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    //
+    //getting all the user
+    @GetMapping
+    public List<User> AllUsers(){
+        return userService.getAllUsers();
+    }
+
+    //getting user by id
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id){
+        return userService.findUserById(id);
+    }
+
+
 }
