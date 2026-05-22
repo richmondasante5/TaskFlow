@@ -15,6 +15,7 @@ import lombok.Setter;
 
 @Data//includes the annotations commented above
 @Entity
+@NoArgsConstructor()
 
 @Table(name = "users")
 public class User {
