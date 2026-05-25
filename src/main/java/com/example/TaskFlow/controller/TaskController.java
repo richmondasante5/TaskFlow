@@ -5,11 +5,9 @@ import com.example.TaskFlow.service.TaskService;
 import com.example.TaskFlow.service.UserService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 @RestController()
@@ -30,4 +28,28 @@ public class TaskController {
         return taskService.createtask(task);
     }
 
+    //getting all tasks
+    @GetMapping()
+    public List<Task> getAllTasks(Task task){
+        return taskService.getAllTasks();
+    }
+
+    //getting task by id
+    @GetMapping("/{id}")
+    public Task getFilterById(@PathVariable Long id){
+        return taskService.getTaskById(id);
+    }
+
+    //Deleting task by id
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Long id){
+        taskService.deleteById(id);
+
+    }
+
+    //updating some records
+    @PutMapping("/{id}")
+    public Task UpdateRecord(@PathVariable Long id, @RequestBody Task updatedTask){
+         return taskService.updateTaskRecord(id, updatedTask);
+    }
 }

@@ -29,4 +29,10 @@ public class UserService {
     public User findUserById(Long id){
        return userRepository.findById(id).orElse(null);
     }
+
+    //method for deleting user by id
+    public void deleteUser(Long id){
+        userRepository.deleteById(id);
+
+    }
 }

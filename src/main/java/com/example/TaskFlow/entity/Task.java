@@ -30,6 +30,7 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User assignedTo;//task assigned to the object of the User Class
 
+    //automatic time stamp will be used later
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
