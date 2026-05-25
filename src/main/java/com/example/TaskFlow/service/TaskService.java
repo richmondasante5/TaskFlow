@@ -1,7 +1,9 @@
 package com.example.TaskFlow.service;
 
 import com.example.TaskFlow.entity.Task;
+import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.TaskRepository;
+import com.example.TaskFlow.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -12,11 +14,15 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     //constructor to receive TaskRepository
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
+
+
 
     //creating Tasks
     public Task createtask(Task task){
@@ -30,7 +36,6 @@ public class TaskService {
 
     //getting task by id. This returns one task
     public Task getTaskById(Long id){
-
         return taskRepository.findById(id).orElse(null);
     }
 
@@ -55,6 +60,20 @@ public class TaskService {
         existingTask.setStatus(updatedTask.getStatus());
         existingTask.setDeletedAt(updatedTask.getDeletedAt());
         return taskRepository.save(updatedTask);
+    }
+
+    //method for assigning task to a user
+    public Task assignTaskToUser(Long taskId, Long userId){
+
+        Task existingTask = taskRepository.findById(taskId).orElse(null);
+        User existingUser = userRepository.findById(userId).orElse(null);
+
+        if (existingTask == null || existingUser == null) {
+            return null;
+        }
+
+        existingTask.setAssignedTo(existingUser);
+        return taskRepository.save(existingTask);
     }
 
 }

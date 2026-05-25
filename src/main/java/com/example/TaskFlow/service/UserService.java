@@ -33,6 +33,22 @@ public class UserService {
     //method for deleting user by id
     public void deleteUser(Long id){
         userRepository.deleteById(id);
+    }
 
+    //updating User Records
+    public User updateUser(Long id, User updatedUser){
+
+        User existingUser= userRepository.findById(id).orElse(null);
+
+        //checking if the user exist
+        if(existingUser==null){
+            return null;
+        }
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setRole(updatedUser.getRole());
+        existingUser.setEmail(updatedUser.getEmail());
+
+        return  userRepository.save(updatedUser);//saving updates
     }
 }

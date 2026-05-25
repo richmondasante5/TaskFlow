@@ -1,5 +1,6 @@
 package com.example.TaskFlow.controller;
 
+import com.example.TaskFlow.entity.Task;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.TaskRepository;
 import com.example.TaskFlow.repository.UserRepository;
@@ -40,6 +41,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         userService.deleteUser(id);
+    }
+
+    //updating user records
+    @PutMapping("/{id}")
+    public User updateUserData(@PathVariable Long id, @RequestBody User updateUser){
+        return userService.updateUser(id, updateUser);
     }
 
 }
