@@ -53,6 +53,7 @@ public class TaskController {
          return taskService.updateTaskRecord(id, updatedTask);
     }
 
+    //assigning a task
     @PutMapping("/{taskId}/assign/{userId}")
     public Task assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
         return taskService.assignTaskToUser(taskId, userId);

@@ -50,4 +50,12 @@ public class UserController {
         return userService.updateUser(id, updateUser);
     }
 
+    //endpoint for user login
+    @PostMapping("/login")
+    public String loginUser(@RequestBody User user) {
+
+        //sending email and password to service layer
+        return userService.loginUser(user.getEmail(), user.getPassword());
+    }
+
 }
