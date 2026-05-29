@@ -1,49 +1,55 @@
 # TaskFlow
 
-TaskFlow is a backend task management application built with Spring Boot and PostgreSQL. The project helps users create, manage, and track tasks through a RESTful API while following industry-standard backend development practices.
+TaskFlow is a backend task management application built with Spring Boot and PostgreSQL. The project enables users to create and manage tasks through a RESTful API while following industry-standard backend development practices.
 
-The primary goal of this project is to strengthen practical experience in backend software development, API design, database integration, and application architecture using modern Java technologies.
+The primary goal of this project is to gain hands-on experience with Java, Spring Boot, REST APIs, database integration, and software architecture while building a practical task management system.
 
 ---
 
 ## Features
 
 ### User Management
-- User registration
-- Password encryption using BCrypt
-- DTO-based request handling
+
+* User registration
+* Password encryption using BCrypt
+* DTO-based request handling
 
 ### Task Management
-- Create tasks
-- Retrieve all tasks
-- Task status management using enums
-- Automatic task creation timestamps
+
+* Create tasks
+* Retrieve all tasks
+* Task status management using enums
+* Automatic task creation timestamps
 
 ### Backend Architecture
-- RESTful API development
-- Layered architecture (Controller, Service, Repository)
-- DTO to Entity mapping
-- PostgreSQL database integration
-- Spring Data JPA persistence
+
+* RESTful API development
+* Layered architecture (Controller, Service, Repository)
+* DTO to Entity mapping
+* PostgreSQL database integration
+* Spring Data JPA persistence
 
 ---
 
 ## Technologies Used
 
 ### Backend
-- Java
-- Spring Boot
-- Spring Data JPA
-- Maven
+
+* Java
+* Spring Boot
+* Spring Data JPA
+* Maven
 
 ### Database
-- PostgreSQL
+
+* PostgreSQL
 
 ### Development Tools
-- IntelliJ IDEA
-- Postman
-- Git
-- GitHub
+
+* IntelliJ IDEA
+* Postman
+* Git
+* GitHub
 
 ---
 
@@ -77,16 +83,16 @@ src/main/java
 
 ### User Endpoints
 
-| Method | Endpoint | Description |
-|----------|----------|-------------|
-| POST | /api/users | Register a new user |
+| Method | Endpoint   | Description         |
+| ------ | ---------- | ------------------- |
+| POST   | /api/users | Register a new user |
 
 ### Task Endpoints
 
-| Method | Endpoint | Description |
-|----------|----------|-------------|
-| POST | /api/tasks | Create a new task |
-| GET | /api/tasks | Retrieve all tasks |
+| Method | Endpoint   | Description        |
+| ------ | ---------- | ------------------ |
+| POST   | /api/tasks | Create a new task  |
+| GET    | /api/tasks | Retrieve all tasks |
 
 ---
 
@@ -99,7 +105,7 @@ src/main/java
 }
 ```
 
-### Example Response
+### Example Task Response
 
 ```json
 {
@@ -115,28 +121,23 @@ src/main/java
 
 ## Planned Features
 
-- Retrieve task by ID
-- Update task details
-- Delete tasks
-- Input validation
-- Global exception handling
-- JWT Authentication and Authorization
-- User-task relationships
-- React frontend integration
-- Dashboard and task analytics
+* JWT Authentication and Authorization
+* User-Task Relationships
+* React Frontend Integration
+* Dashboard and Task Analytics
 
 ---
 
 ## Learning Objectives
 
-This project is being developed to gain hands-on experience with:
+This project is being developed to gain practical experience with:
 
-- Java and Spring Boot
-- REST API development
-- PostgreSQL database design
-- Software architecture and design patterns
-- Authentication and security
-- Full-stack application development
+* Java and Spring Boot
+* REST API development
+* PostgreSQL database design
+* Software architecture and design patterns
+* Authentication and security
+* Full-stack application development
 
 ---
 
@@ -152,4 +153,4 @@ GitHub: https://github.com/richmondasante5
 
 🚧 Active Development
 
-TaskFlow is currently under development, with new features being added incrementally as part of a continuous learning and portfolio-building process.
+TaskFlow is currently under active development, with new features being added incrementally as part of continuous learning and portfolio development.
