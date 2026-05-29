@@ -35,7 +35,7 @@ public class User {
     private String lastName;
 
     @NotBlank(message="Phone Number is required!")
-    @Pattern(regexp = "//d+", message = "Enter valid Phone Number!")
+    @Pattern(regexp = "\\d+", message = "Enter valid Phone Number!")
     private String phone;
 
     @NotBlank(message="Email is required!")

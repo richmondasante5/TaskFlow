@@ -1,5 +1,6 @@
 package com.example.TaskFlow.controller;
 
+import com.example.TaskFlow.dto.TaskRegisterRequest;
 import com.example.TaskFlow.entity.Task;
 import com.example.TaskFlow.service.TaskService;
 import com.example.TaskFlow.service.UserService;
@@ -24,8 +25,8 @@ public class TaskController {
 
     //method for creating a new task
     @PostMapping()
-    public Task createNewTask(@RequestBody Task task){
-        return taskService.createtask(task);
+    public Task createNewTask(@RequestBody TaskRegisterRequest taskRegisterRequest){
+        return taskService.createTask(taskRegisterRequest);
     }
 
     //getting all tasks

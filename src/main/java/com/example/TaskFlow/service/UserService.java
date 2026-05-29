@@ -1,5 +1,7 @@
 package com.example.TaskFlow.service;
 
+import com.example.TaskFlow.dto.LoginResponse;
+import com.example.TaskFlow.dto.RegisterRequest;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,7 +11,10 @@ import java.util.List;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
+    RegisterRequest registerRequest = new RegisterRequest();
+
 
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -21,11 +26,26 @@ public class UserService {
 
 
     //creating a user
-    public User createUser(User user){
-        //hashing raw password before saving to database
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public User createUser(RegisterRequest registerRequest) {
 
+        //creating User entity object
+        User user = new User();
+
+        //copying data from DTO to entity
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setPhone(registerRequest.getPhone());
+        user.setEmail(registerRequest.getEmail());
+
+        //hashing password before saving
+        user.setPassword(
+                passwordEncoder.encode(registerRequest.getPassword())
+        );
+
+        user.setRole(registerRequest.getRole());
+
+        //saving user entity to database
+        return userRepository.save(user);
     }
 
     //getting all users
@@ -61,22 +81,32 @@ public class UserService {
     }
 
     //method for user login/authentication
-    public String loginUser(String email, String password) {
+    public LoginResponse loginUser(String email, String password) {
+
+        LoginResponse response = new LoginResponse();
 
         //searching database for user with provided email
         User existingUser = userRepository.findByEmail(email).orElse(null);
 
         //checking if user exists
         if (existingUser == null) {
-            return "User not found";
+            response.setMessage("User not found!");
+            return response;
         }
 
         //checking if passwords match
         if (passwordEncoder.matches(password, existingUser.getPassword())) {
-            return "Login successful";
+
+            //response.setMessage("Login Successful");
+            response.setEmail(existingUser.getEmail());
+            response.setRole(existingUser.getRole());
+
+            return response;
         }
 
         //runs if password is incorrect
-        return "Invalid password";
+        response.setMessage("Invalid Password!");
+        return response;
     }
+
 }

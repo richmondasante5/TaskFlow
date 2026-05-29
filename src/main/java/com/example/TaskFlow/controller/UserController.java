@@ -1,11 +1,15 @@
 package com.example.TaskFlow.controller;
 
+import com.example.TaskFlow.dto.LoginRequest;
+import com.example.TaskFlow.dto.LoginResponse;
+import com.example.TaskFlow.dto.RegisterRequest;
 import com.example.TaskFlow.entity.Task;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.TaskRepository;
 import com.example.TaskFlow.repository.UserRepository;
 import com.example.TaskFlow.service.UserService;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,10 +24,10 @@ public class UserController {
         this.userService=userService;
     }
 
-    //creating a new User
+    // creating a new User using RegisterRequest DTO
     @PostMapping
-    public User createUser(@Valid @RequestBody User user){
-        return userService.createUser(user);
+    public User createUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        return userService.createUser(registerRequest);
     }
 
     //getting all the user
@@ -50,12 +54,12 @@ public class UserController {
         return userService.updateUser(id, updateUser);
     }
 
-    //endpoint for user login
+    //endpoint for user login (OLD LOGIN APPROACH)
     @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
+    public LoginResponse loginUser(@RequestBody LoginRequest loginRequest) {
 
         //sending email and password to service layer
-        return userService.loginUser(user.getEmail(), user.getPassword());
+        return userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
     }
 
 }

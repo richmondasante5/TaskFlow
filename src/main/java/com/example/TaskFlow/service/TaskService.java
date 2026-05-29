@@ -1,5 +1,6 @@
 package com.example.TaskFlow.service;
 
+import com.example.TaskFlow.dto.TaskRegisterRequest;
 import com.example.TaskFlow.entity.Task;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.TaskRepository;
@@ -8,13 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.TaskFlow.entity.Task.Status.PENDING;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.STATUS;
 
 @Service
 public class TaskService {
-
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+
 
     //constructor to receive TaskRepository
     public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
@@ -23,11 +28,20 @@ public class TaskService {
     }
 
 
+    //creating a new Task
+    public Task createTask(TaskRegisterRequest taskRegisterRequest){
+        Task task  = new Task();
+        task.setTaskName(taskRegisterRequest.getTaskName());
+        task.setTaskDescription(taskRegisterRequest.getTaskDescription());
+        task.setStatus(PENDING);
+        task.setCreatedAt(LocalDateTime.now());
 
-    //creating Tasks
-    public Task createtask(Task task){
         return taskRepository.save(task);
     }
+
+
+
+
 
     //getting all Tasks into list
     public List<Task> getAllTasks(){
