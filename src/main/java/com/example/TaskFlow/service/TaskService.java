@@ -40,9 +40,6 @@ public class TaskService {
     }
 
 
-
-
-
     //getting all Tasks into list
     public List<Task> getAllTasks(){
         return taskRepository.findAll();
