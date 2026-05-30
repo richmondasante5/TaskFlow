@@ -4,6 +4,7 @@ import com.example.TaskFlow.dto.LoginResponse;
 import com.example.TaskFlow.dto.RegisterRequest;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.UserRepository;
+import com.example.TaskFlow.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,13 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     RegisterRequest registerRequest = new RegisterRequest();
 
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, JwtService jwtService){
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
 
     }
 
@@ -96,10 +99,17 @@ public class UserService {
 
         //checking if passwords match
         if (passwordEncoder.matches(password, existingUser.getPassword())) {
+            // generating JWT token after successful login
+            String token = jwtService.generateToken(
+                    existingUser.getEmail(),
+                    existingUser.getRole()
+            );
 
-            //response.setMessage("Login Successful");
+            // setting login response data
+            response.setMessage("Login Successful");
             response.setEmail(existingUser.getEmail());
             response.setRole(existingUser.getRole());
+            response.setToken(token);
 
             return response;
         }
