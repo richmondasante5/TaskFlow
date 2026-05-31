@@ -1,16 +1,16 @@
 # TaskFlow
 
-TaskFlow is a Spring Boot REST API for task and user management. The project is designed to demonstrate modern backend development practices including layered architecture, DTO-based request/response handling, validation, exception handling, authentication, and relational database integration.
+TaskFlow is a backend task management application built with Spring Boot and PostgreSQL. The project demonstrates modern backend development practices including layered architecture, DTO-based request and response handling, validation, exception handling, password encryption, and JWT-based authentication.
 
 ## Features
 
 ### User Management
 
 * User registration
-* User login
+* User login and authentication
 * Password encryption using BCrypt
 * DTO-based request and response handling
-* JWT token generation after successful authentication
+* JWT token generation after successful login
 
 ### Task Management
 
@@ -24,10 +24,10 @@ TaskFlow is a Spring Boot REST API for task and user management. The project is 
 
 * Password hashing with BCrypt
 * JWT token generation
-* Input validation
+* Request validation
 * Global exception handling
 
-### Technologies Used
+## Technologies Used
 
 * Java
 * Spring Boot
@@ -36,31 +36,69 @@ TaskFlow is a Spring Boot REST API for task and user management. The project is 
 * Maven
 * Lombok
 * JWT (JSON Web Token)
+* Git & GitHub
+* Postman
 
-### Project Structure
+## Project Architecture
 
-* controller/ – REST API endpoints
-* service/ – Business logic
-* repository/ – Database access layer
-* entity/ – Database entities
-* dto/ – Request and response objects
-* exception/ – Global exception handling
-* security/ – JWT authentication components
+### Controller Layer
 
-### Current Progress
+Handles incoming HTTP requests and returns responses.
 
-* User registration implemented
-* User login implemented
-* DTO architecture implemented
-* Password encryption implemented
-* JWT token generation implemented
-* Task CRUD operations implemented
-* PostgreSQL integration completed
+### Service Layer
 
-### Planned Enhancements
+Contains business logic and application rules.
 
-* JWT validation filter
-* Role-based authorization
-* React frontend
-* Task ownership and permissions
-* Dashboard and reporting features
+### Repository Layer
+
+Handles database operations using Spring Data JPA.
+
+### DTO Layer
+
+Transfers data between clients and the backend while protecting internal entities.
+
+### Security Layer
+
+Responsible for JWT generation and request filtering.
+
+## Current Progress
+
+### Completed
+
+* User Registration
+* User Login
+* Password Encryption
+* DTO Architecture
+* Validation and Error Handling
+* PostgreSQL Integration
+* Task CRUD Operations
+* JWT Token Generation
+* JWT Authentication Filter Foundation
+
+### In Progress
+
+* JWT Token Validation
+* Spring Security Configuration
+* Protected API Endpoints
+* Role-Based Authorization
+
+## Future Enhancements
+
+* React Frontend
+* Dashboard Interface
+* Task Status Tracking
+* Task Priority Levels
+* Due Dates
+* Swagger/OpenAPI Documentation
+* User-Specific Task Management
+
+## Learning Objectives
+
+This project is being developed as a hands-on learning project to strengthen practical experience with:
+
+* Spring Boot
+* REST API Development
+* Authentication and Authorization
+* Database Design
+* Backend Architecture
+* Full-Stack Development
