@@ -54,7 +54,7 @@ public class UserController {
         return userService.updateUser(id, updateUser);
     }
 
-    //endpoint for user login (OLD LOGIN APPROACH)
+    //endpoint for user login
     @PostMapping("/login")
     public LoginResponse loginUser(@RequestBody LoginRequest loginRequest) {
 

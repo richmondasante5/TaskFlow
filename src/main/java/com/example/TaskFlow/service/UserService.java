@@ -99,11 +99,9 @@ public class UserService {
 
         //checking if passwords match
         if (passwordEncoder.matches(password, existingUser.getPassword())) {
+
             // generating JWT token after successful login
-            String token = jwtService.generateToken(
-                    existingUser.getEmail(),
-                    existingUser.getRole()
-            );
+            String token = jwtService.generateToken(existingUser.getEmail(), existingUser.getRole());
 
             // setting login response data
             response.setMessage("Login Successful");
