@@ -2,14 +2,10 @@ package com.example.TaskFlow.controller;
 
 import com.example.TaskFlow.dto.LoginRequest;
 import com.example.TaskFlow.dto.LoginResponse;
-import com.example.TaskFlow.dto.RegisterRequest;
-import com.example.TaskFlow.entity.Task;
+import com.example.TaskFlow.dto.UserRegisterRequest;
 import com.example.TaskFlow.entity.User;
-import com.example.TaskFlow.repository.TaskRepository;
-import com.example.TaskFlow.repository.UserRepository;
 import com.example.TaskFlow.service.UserService;
 import jakarta.validation.Valid;
-import org.jspecify.annotations.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +20,10 @@ public class UserController {
         this.userService=userService;
     }
 
-    // creating a new User using RegisterRequest DTO
+    // creating a new User using UserRegisterRequest DTO
     @PostMapping
-    public User createUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        return userService.createUser(registerRequest);
+    public User createUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+        return userService.createUser(userRegisterRequest);
     }
 
     //getting all the user

@@ -6,13 +6,15 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -31,8 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // getting Authorization header from incoming request
         final String authHeader = request.getHeader("Authorization");
@@ -57,13 +59,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // checking if user exists and token is valid
         if (user != null && jwtService.isTokenValid(jwtToken, user.getEmail())) {
 
+            // creating authority from user role
+            SimpleGrantedAuthority authority =
+                    new SimpleGrantedAuthority("ROLE_" + user.getRole());
+
             // creating authentication object for Spring Security
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
                             user.getEmail(),
                             null,
-                            Collections.emptyList()
+                            List.of(authority)
                     );
+
             // storing authenticated user in Spring Security context
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }

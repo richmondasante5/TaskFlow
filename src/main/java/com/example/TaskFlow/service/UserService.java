@@ -1,7 +1,7 @@
 package com.example.TaskFlow.service;
 
 import com.example.TaskFlow.dto.LoginResponse;
-import com.example.TaskFlow.dto.RegisterRequest;
+import com.example.TaskFlow.dto.UserRegisterRequest;
 import com.example.TaskFlow.entity.User;
 import com.example.TaskFlow.repository.UserRepository;
 import com.example.TaskFlow.security.JwtService;
@@ -15,7 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    RegisterRequest registerRequest = new RegisterRequest();
+    UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
 
 
     public UserService(UserRepository userRepository, JwtService jwtService){
@@ -29,26 +29,28 @@ public class UserService {
 
 
     //creating a user
-    public User createUser(RegisterRequest registerRequest) {
+    public User createUser(UserRegisterRequest userRegisterRequest) {
 
         //creating User entity object
         User user = new User();
 
         //copying data from DTO to entity
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
-        user.setPhone(registerRequest.getPhone());
-        user.setEmail(registerRequest.getEmail());
+        user.setFirstName(userRegisterRequest.getFirstName());
+        user.setLastName(userRegisterRequest.getLastName());
+        user.setPhone(userRegisterRequest.getPhone());
+        user.setEmail(userRegisterRequest.getEmail());
 
         //hashing password before saving
         user.setPassword(
-                passwordEncoder.encode(registerRequest.getPassword())
+                passwordEncoder.encode(userRegisterRequest.getPassword())
         );
 
-        user.setRole(registerRequest.getRole());
+        //setting default role for public registration
+        user.setRole("USER");
 
         //saving user entity to database
         return userRepository.save(user);
+
     }
 
     //getting all users
