@@ -1,104 +1,152 @@
 # TaskFlow
 
-TaskFlow is a backend task management application built with Spring Boot and PostgreSQL. The project demonstrates modern backend development practices including layered architecture, DTO-based request and response handling, validation, exception handling, password encryption, and JWT-based authentication.
+TaskFlow is a task management REST API built using Spring Boot and PostgreSQL. The application allows users to register, securely authenticate using JWT, and manage tasks under role-based access control (RBAC). It demonstrates modern backend development practices, including a layered architecture, DTOs, Spring Security, and stateless authentication.
 
 ## Features
 
-### User Management
-
-* User registration
-* User login and authentication
-* Password encryption using BCrypt
-* DTO-based request and response handling
-* JWT token generation after successful login
-
-### Task Management
-
-* Create tasks
-* View tasks
-* Update tasks
-* Delete tasks
-* Task assignment support
-
-### Security
-
-* Password hashing with BCrypt
-* JWT token generation
-* Request validation
-* Global exception handling
-
-## Technologies Used
-
-* Java
-* Spring Boot
-* Spring Data JPA
-* PostgreSQL
-* Maven
-* Lombok
-* JWT (JSON Web Token)
-* Git & GitHub
-* Postman
-
-## Project Architecture
-
-### Controller Layer
-
-Handles incoming HTTP requests and returns responses.
-
-### Service Layer
-
-Contains business logic and application rules.
-
-### Repository Layer
-
-Handles database operations using Spring Data JPA.
-
-### DTO Layer
-
-Transfers data between clients and the backend while protecting internal entities.
-
-### Security Layer
-
-Responsible for JWT generation and request filtering.
-
-## Current Progress
-
-### Completed
-
 * User Registration
-* User Login
-* Password Encryption
-* DTO Architecture
-* Validation and Error Handling
-* PostgreSQL Integration
-* Task CRUD Operations
-* JWT Token Generation
-* JWT Authentication Filter Foundation
-
-### In Progress
-
-* JWT Token Validation
+* Secure Login with JWT Authentication
+* Password Encryption using BCrypt
+* Role-Based Access Control (RBAC)
+* Task Creation, Retrieval, Update, and Deletion
+* PostgreSQL Database Integration
+* RESTful API Design
 * Spring Security Configuration
-* Protected API Endpoints
-* Role-Based Authorization
+* DTO-Based Request and Response Handling
+
+## Technology Stack
+
+### Backend
+
+* Java 25
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+* Hibernate
+
+### Database
+
+* PostgreSQL
+
+### Authentication & Security
+
+* JSON Web Tokens (JWT)
+* BCrypt Password Encoding
+* Role-Based Access Control (RBAC)
+
+### Development Tools
+
+* IntelliJ IDEA
+* Postman
+* Git
+* GitHub
+
+## Project Structure
+
+```text
+src/main/java
+├── controller
+├── service
+├── repository
+├── entity
+├── dto
+├── security
+└── config
+```
+
+### Architecture
+
+```text
+Client Request
+      ↓
+ Controller
+      ↓
+   Service
+      ↓
+ Repository
+      ↓
+ PostgreSQL
+```
+
+Authentication Flow:
+
+```text
+Login
+  ↓
+JWT Generated
+  ↓
+Client Stores Token
+  ↓
+Bearer Token Sent With Requests
+  ↓
+JWT Filter Validates Token
+  ↓
+Security Context Created
+  ↓
+Access Granted Based On Role
+```
+
+## User Roles
+
+The application supports the following roles:
+
+* ADMIN
+* MANAGER
+* DEVELOPER
+* USER
+
+Role permissions are enforced using Spring Security and JWT authentication.
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint     | Description   |
+| ------ | ------------ | ------------- |
+| POST   | /users       | Register User |
+| POST   | /users/login | Login User    |
+
+### Users
+
+| Method | Endpoint    | Access |
+| ------ | ----------- | ------ |
+| GET    | /users      | ADMIN  |
+| PUT    | /users/{id} | ADMIN  |
+| DELETE | /users/{id} | ADMIN  |
+
+### Tasks
+
+| Method | Endpoint    | Access                          |
+| ------ | ----------- | ------------------------------- |
+| GET    | /tasks      | ADMIN, MANAGER, DEVELOPER, USER |
+| POST   | /tasks      | ADMIN, MANAGER, DEVELOPER       |
+| PUT    | /tasks/{id} | ADMIN, MANAGER, DEVELOPER       |
+| DELETE | /tasks/{id} | ADMIN, MANAGER                  |
+
+## Key Concepts Demonstrated
+
+* Spring Boot REST API Development
+* Layered Architecture
+* DTO Pattern
+* JWT Authentication
+* Stateless Security
+* Role-Based Access Control (RBAC)
+* Password Hashing with BCrypt
+* Database Relationships using JPA/Hibernate
+* API Testing with Postman
 
 ## Future Enhancements
 
-* React Frontend
-* Dashboard Interface
-* Task Status Tracking
-* Task Priority Levels
-* Due Dates
-* Swagger/OpenAPI Documentation
-* User-Specific Task Management
+* React Frontend Integration
+* Task Assignment Management
+* Dashboard Analytics
+* Email Notifications
+* Pagination and Filtering
+* Docker Deployment
+* Cloud Deployment
 
-## Learning Objectives
+## Author
 
-This project is being developed as a hands-on learning project to strengthen practical experience with:
+Richmond Asante
 
-* Spring Boot
-* REST API Development
-* Authentication and Authorization
-* Database Design
-* Backend Architecture
-* Full-Stack Development
+GitHub: https://github.com/richmondasante5
