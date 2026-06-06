@@ -3,46 +3,54 @@ package com.example.TaskFlow.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    // custom JWT filter that checks tokens before requests reach controllers
+    // Custom JWT filter that checks tokens before requests reach controllers
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // constructor injection
+    // Constructor injection
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    // main Spring Security configuration
+    // Main Spring Security configuration
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                // disable CSRF because this is a stateless REST API using JWT
+                // Enable CORS so React frontend can call Spring Boot backend
+                .cors(Customizer.withDefaults())
+
+                // Disable CSRF because this is a stateless REST API using JWT
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // define which endpoints are public or protected
+                // Define which endpoints are public or protected
                 .authorizeHttpRequests(auth -> auth
 
-                        // public endpoints - no token required
-                                // public endpoints - no token required
+                        // Public endpoints - no token required
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
-                        // admin-only user management endpoints
+                        // Admin-only user management endpoints
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
-                        // task endpoints allowed by role
+                        // Task endpoints allowed by role
                         .requestMatchers(HttpMethod.GET, "/tasks", "/tasks/**")
                         .hasAnyRole("ADMIN", "MANAGER", "DEVELOPER", "USER")
 
@@ -55,22 +63,57 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/tasks", "/tasks/**")
                         .hasAnyRole("ADMIN", "MANAGER")
 
-                        // every other endpoint requires valid JWT authentication
+                        // Every other endpoint requires valid JWT authentication
                         .anyRequest().authenticated()
                 )
 
-                // do not create server-side sessions because JWT is stateless
+                // Do not create server-side sessions because JWT is stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // run our JWT filter before Spring's default username/password filter
+                // Run our JWT filter before Spring's default username/password filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 )
 
-                // build and return the security configuration
+                // Build and return the security configuration
                 .build();
+    }
+
+    // CORS configuration for React frontend
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Allow React dev server ports
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175"
+        ));
+
+        // Allow common HTTP methods
+        configuration.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
+
+        // Allow all headers, including Authorization and Content-Type
+        configuration.setAllowedHeaders(List.of("*"));
+
+        // Allow credentials if needed later
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        // Apply CORS settings to all backend endpoints
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
