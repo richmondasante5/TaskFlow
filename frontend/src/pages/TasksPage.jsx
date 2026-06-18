@@ -1,32 +1,51 @@
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
-import { getAllTasks, createTask, deleteTask } from '../services/taskService'
+import {
+  getAllTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+  assignTaskToUser,
+} from '../services/taskService'
+import { getAllUsers } from '../services/userService'
+import TaskForm from '../components/TaskForm'
+import TaskTable from '../components/TaskTable'
 
 function TasksPage() {
-  // Get authentication data from AuthContext
+  // Get logged-in user data from AuthContext
   const { token, email, role, logout } = useContext(AuthContext)
 
-  // Store tasks from backend
+  // Stores tasks from backend
   const [tasks, setTasks] = useState([])
 
-  // Store create task form values
+  // Stores users from backend for task assignment
+  const [users, setUsers] = useState([])
+
+  // Create task form state
   const [taskName, setTaskName] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
 
-  // Store loading and error states
+  // Edit task state
+  const [editingTaskId, setEditingTaskId] = useState(null)
+  const [editTaskName, setEditTaskName] = useState('')
+  const [editTaskDescription, setEditTaskDescription] = useState('')
+  const [editStatus, setEditStatus] = useState('PENDING')
+
+  // Loading and error states
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Used for navigation
+  // Used for page navigation
   const navigate = useNavigate()
 
-  // Load tasks when page opens
+  // Runs once when TasksPage loads
   useEffect(() => {
     loadTasks()
+    loadUsers()
   }, [])
 
-  // Get all tasks from backend
+  // Load all tasks from Spring Boot
   const loadTasks = async () => {
     try {
       setLoading(true)
@@ -38,6 +57,16 @@ function TasksPage() {
       setErrorMessage('Unable to load tasks.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Load all users for assignment dropdown
+  const loadUsers = async () => {
+    try {
+      const response = await getAllUsers(token)
+      setUsers(response.data)
+    } catch (error) {
+      setErrorMessage('Unable to load users.')
     }
   }
 
@@ -64,8 +93,66 @@ function TasksPage() {
     }
   }
 
-  // Delete selected task
+  // Put task into edit mode
+  const handleEditClick = (task) => {
+    setEditingTaskId(task.id)
+    setEditTaskName(task.taskName)
+    setEditTaskDescription(task.taskDescription)
+    setEditStatus(task.status)
+  }
+
+  // Cancel edit mode
+  const handleCancelEdit = () => {
+    setEditingTaskId(null)
+    setEditTaskName('')
+    setEditTaskDescription('')
+    setEditStatus('PENDING')
+  }
+
+  // Update selected task
+  const handleUpdateTask = async (task) => {
+    try {
+      setErrorMessage('')
+
+      const updatedTask = {
+        ...task,
+        taskName: editTaskName,
+        taskDescription: editTaskDescription,
+        status: editStatus,
+      }
+
+      await updateTask(task.id, updatedTask, token)
+
+      handleCancelEdit()
+      loadTasks()
+    } catch (error) {
+      setErrorMessage('Unable to update task.')
+    }
+  }
+
+  // Assign task to selected user
+  const handleAssignTask = async (taskId, userId) => {
+    if (!userId) return
+
+    try {
+      setErrorMessage('')
+
+      await assignTaskToUser(taskId, userId, token)
+
+      loadTasks()
+    } catch (error) {
+      setErrorMessage('Unable to assign task.')
+    }
+  }
+
+  // Delete task after confirmation
   const handleDeleteTask = async (taskId) => {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this task?'
+    )
+
+    if (!confirmed) return
+
     try {
       setErrorMessage('')
 
@@ -94,73 +181,37 @@ function TasksPage() {
 
       <hr />
 
-      <h2>Create Task</h2>
-
-      <form onSubmit={handleCreateTask}>
-        <div>
-          <label>Task Name</label>
-          <input
-            type="text"
-            value={taskName}
-            onChange={(event) => setTaskName(event.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Task Description</label>
-          <textarea
-            value={taskDescription}
-            onChange={(event) => setTaskDescription(event.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit">Create Task</button>
-      </form>
+      <TaskForm
+        taskName={taskName}
+        setTaskName={setTaskName}
+        taskDescription={taskDescription}
+        setTaskDescription={setTaskDescription}
+        handleCreateTask={handleCreateTask}
+      />
 
       <hr />
-
-      <h2>Task List</h2>
 
       {loading && <p>Loading tasks...</p>}
 
       {errorMessage && <p>{errorMessage}</p>}
 
-      {!loading && tasks.length === 0 && <p>No tasks found.</p>}
-
-      {!loading && tasks.length > 0 && (
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Task Name</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Assigned To</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {tasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.id}</td>
-                <td>{task.taskName}</td>
-                <td>{task.taskDescription}</td>
-                <td>{task.status}</td>
-                <td>
-                  {task.assignedTo ? task.assignedTo.email : 'Not Assigned'}
-                </td>
-                <td>
-                  <button onClick={() => handleDeleteTask(task.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {!loading && (
+        <TaskTable
+          tasks={tasks}
+          users={users}
+          editingTaskId={editingTaskId}
+          editTaskName={editTaskName}
+          setEditTaskName={setEditTaskName}
+          editTaskDescription={editTaskDescription}
+          setEditTaskDescription={setEditTaskDescription}
+          editStatus={editStatus}
+          setEditStatus={setEditStatus}
+          handleEditClick={handleEditClick}
+          handleUpdateTask={handleUpdateTask}
+          handleCancelEdit={handleCancelEdit}
+          handleDeleteTask={handleDeleteTask}
+          handleAssignTask={handleAssignTask}
+        />
       )}
     </div>
   )

@@ -4,6 +4,7 @@ import { createContext, useState } from 'react'
 export const AuthContext = createContext()
 
 function AuthProvider({ children }) {
+  
   // Load saved auth values when app starts
   const [token, setToken] = useState(localStorage.getItem('token') || '')
   const [email, setEmail] = useState(localStorage.getItem('email') || '')
