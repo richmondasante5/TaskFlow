@@ -39,40 +39,23 @@ A full-stack task management application built with Java, Spring Boot, React, an
 * IntelliJ IDEA
 * VS Code
 
-## Screenshots
-
-### Login Page
-
-(Add screenshot here)
-
-### Dashboard
-
-(Add screenshot here)
-
-### Task Management
-
-(Add screenshot here)
-
-### User Management
-
-(Add screenshot here)
-
 ## Project Structure
 
-Backend
+### Backend
 
-* Spring Boot REST API
 * Authentication & Authorization
 * User Management
 * Task Management
+* REST APIs
 * Database Layer
 
-Frontend
+### Frontend
 
-* Authentication Pages
+* Login & Registration
 * Dashboard
 * Task Management Interface
 * Protected Routes
+* Responsive User Interface
 
 ## Getting Started
 
