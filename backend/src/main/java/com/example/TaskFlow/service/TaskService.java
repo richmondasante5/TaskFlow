@@ -70,7 +70,7 @@ public class TaskService {
         existingTask.setUpdatedAt(updatedTask.getUpdatedAt());
         existingTask.setStatus(updatedTask.getStatus());
         existingTask.setDeletedAt(updatedTask.getDeletedAt());
-        return taskRepository.save(updatedTask);
+        return taskRepository.save(existingTask);
     }
 
     //method for assigning task to a user
