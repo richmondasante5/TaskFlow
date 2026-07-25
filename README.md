@@ -1,8 +1,3 @@
-Yes 😄 — this README is now **behind the actual project**. The biggest problem is that it still lists **Cloud deployment** and **testing** under Future Enhancements even though you've already done substantial Docker/Azure work.
-
-Since CI/CD is the next thing we're implementing, I wouldn't claim it as complete yet. Here's the version I'd use **right now**:
-
-````markdown
 # TaskFlow
 
 TaskFlow is a secure, full-stack task management application built with Java, Spring Boot, React, and PostgreSQL. It provides role-based task management through REST APIs and is being deployed to Microsoft Azure using Docker and modern cloud deployment practices.
@@ -14,7 +9,7 @@ TaskFlow is a secure, full-stack task management application built with Java, Sp
 - Role-Based Access Control (RBAC)
 - Task creation, assignment, and management
 - Task status tracking
-- Secure RESTful APIs
+- Secure REST APIs
 - PostgreSQL database integration
 - Protected frontend routes
 - Responsive React interface
@@ -47,56 +42,69 @@ TaskFlow is a secure, full-stack task management application built with Java, Sp
 - Azure Container Registry (ACR)
 - Azure Managed Identity
 - Azure Role-Based Access Control (RBAC)
-- Git & GitHub
+- Git
+- GitHub
 
 ## Architecture
 
 ```text
 React Frontend
-      │
-      │ HTTP / REST API
-      ▼
+      |
+      | HTTP / REST API
+      v
 Spring Boot Backend
-      │
-      │ Spring Data JPA
-      ▼
+      |
+      | Spring Data JPA
+      v
 PostgreSQL Database
 ```
 
-### Cloud Deployment
+## Cloud Deployment Architecture
 
 ```text
 Source Code
-     │
-     ▼
+     |
+     v
 Docker Image
-     │
-     ▼
+     |
+     v
 Azure Container Registry (ACR)
-     │
-     │ AcrPull
-     ▼
+     |
+     | AcrPull
+     v
 Azure App Service
-     │
-     ▼
-Spring Boot API
-     │
-     ▼
+     |
+     v
+Spring Boot REST API
+     |
+     v
 PostgreSQL
 ```
 
-The Spring Boot backend is containerized with Docker and published to Azure Container Registry. Azure App Service uses a Managed Identity with Azure RBAC to securely access the container image without storing registry credentials in the application.
+The Spring Boot backend is containerized using Docker and published to Azure Container Registry (ACR).
+
+Azure App Service uses a Managed Identity with Azure Role-Based Access Control (RBAC) to securely access container images stored in ACR without requiring registry credentials to be stored directly in the application.
+
+The `AcrPull` role follows the principle of least privilege by allowing the App Service identity to pull container images without granting unnecessary push or administrative permissions.
 
 ## Security
 
-TaskFlow implements application and cloud security at multiple levels:
+TaskFlow implements security at both the application and cloud infrastructure levels.
 
-- Spring Security for backend security
-- JWT for stateless authentication
-- Role-Based Access Control (RBAC) for application authorization
+### Application Security
+
+- Spring Security
+- JWT-based authentication
+- Role-Based Access Control (RBAC)
+- Protected REST API endpoints
 - Protected React routes
-- Azure Managed Identity for service-to-service authentication
-- Azure RBAC following the principle of least privilege
+
+### Cloud Security
+
+- Azure Managed Identity
+- Azure Role-Based Access Control (RBAC)
+- Least-privilege access to Azure Container Registry
+- Environment-based application configuration
 
 ## Project Structure
 
@@ -108,6 +116,7 @@ TaskFlow implements application and cloud security at multiple levels:
 - REST API Layer
 - Service Layer
 - Data Access Layer
+- Database Integration
 
 ### Frontend
 
@@ -122,19 +131,24 @@ TaskFlow implements application and cloud security at multiple levels:
 ### Backend
 
 1. Clone the repository.
-2. Configure the PostgreSQL database.
-3. Configure the required environment variables.
-4. Run the Spring Boot application.
+
+```bash
+git clone https://github.com/richmondasante5/TaskFlow.git
+```
+
+2. Configure the PostgreSQL database and required environment variables.
+
+3. Run the Spring Boot application.
 
 ### Frontend
 
-Navigate to the frontend directory and install the dependencies:
+Navigate to the frontend directory and install the required dependencies.
 
 ```bash
 npm install
 ```
 
-Start the development server:
+Start the development server.
 
 ```bash
 npm run dev
@@ -142,11 +156,15 @@ npm run dev
 
 ## Docker
 
-The Spring Boot backend can also be built and run as a Docker container.
+The Spring Boot backend is containerized with Docker, allowing the application to run consistently across development and cloud environments.
+
+Build the Docker image:
 
 ```bash
 docker build -t taskflow-api .
 ```
+
+Run the container:
 
 ```bash
 docker run -p 8080:8080 taskflow-api
@@ -158,10 +176,38 @@ TaskFlow is actively being developed and deployed.
 
 Current work includes:
 
-- Completing the Azure cloud deployment
-- Implementing CI/CD with GitHub Actions
-- UI/UX improvements with Tailwind CSS
+- Completing Azure App Service deployment
+- Implementing CI/CD pipelines with GitHub Actions
+- Automating Docker image builds and Azure deployments
+- Improving the frontend UI/UX with Tailwind CSS
 - Expanding automated testing
+
+## CI/CD
+
+A GitHub Actions CI/CD pipeline is currently being implemented to automate the application delivery process.
+
+The target workflow is:
+
+```text
+GitHub Push
+     |
+     v
+GitHub Actions
+     |
+     v
+Build & Test
+     |
+     v
+Docker Image
+     |
+     v
+Azure Container Registry
+     |
+     v
+Azure App Service
+```
+
+Once completed, application changes pushed to GitHub will be automatically built, tested, containerized, published to Azure Container Registry, and deployed to Azure App Service.
 
 ## Planned Enhancements
 
@@ -169,33 +215,11 @@ Current work includes:
 - Email notifications
 - Dashboard analytics
 - Additional automated tests
+- Frontend UI/UX improvements
 
 ## Author
 
 **Richmond Asante**
 
-- GitHub: github.com/richmondasante5
-- LinkedIn: linkedin.com/in/richmondasante5
-````
-
-### One important thing
-
-Once we finish the GitHub Actions pipeline, we'll add a proper **CI/CD** section showing:
-
-```text
-GitHub Push
-    ↓
-GitHub Actions
-    ↓
-Build & Test
-    ↓
-Docker Image
-    ↓
-Azure Container Registry
-    ↓
-Azure App Service
-```
-
-That README will tell a recruiter much more than *“I know Azure.”* It shows that you understand **how the application gets from source code to a running cloud environment**.
-
-And I would **not put a live Azure URL in it yet**. Once we verify the deployed application end-to-end, then we add **Live Demo** near the very top.
+GitHub: github.com/richmondasante5  
+LinkedIn: linkedin.com/in/richmondasante5
