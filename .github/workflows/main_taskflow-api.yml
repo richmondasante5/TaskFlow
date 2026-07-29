@@ -19,6 +19,29 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # Temporary PostgreSQL database used by the Spring Boot tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: github
+          POSTGRES_PASSWORD: github
+          POSTGRES_DB: taskflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U github"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Database configuration used by Spring Boot during CI testing
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow
+      SPRING_DATASOURCE_USERNAME: github
+      SPRING_DATASOURCE_PASSWORD: github
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
