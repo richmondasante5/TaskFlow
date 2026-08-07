@@ -107,7 +107,16 @@ jobs:
           docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }}"
           docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:latest"
 
-      # 9. Deploy the new container image to Azure App Service
+      # 9. Verify that GitHub Actions can see the App Service
+      - name: Verify App Service exists
+        run: |
+          az webapp show \
+            --name "$WEBAPP_NAME" \
+            --resource-group "$ACR_RESOURCE_GROUP" \
+            --query "{name:name, resourceGroup:resourceGroup, state:state}" \
+            --output table
+
+      # 10. Deploy the new container image to Azure App Service
       - name: Deploy container to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
@@ -115,7 +124,7 @@ jobs:
           slot-name: Production
           images: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      # 10. End Azure CLI session
+      # 11. End Azure CLI session
       - name: Log out of Azure
         if: always()
         run: az logout
