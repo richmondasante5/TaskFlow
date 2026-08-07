@@ -1,12 +1,9 @@
-import axios from 'axios'
-
-// Backend user API base URL
-const API_URL = 'http://localhost:8080/users'
+import API from '../config/axios.js'
 
 // Get all users from backend
-// Only ADMIN can access this based on your Spring Security rules
+// Only ADMIN can access this endpoint based on the Security rules
 export const getAllUsers = async (token) => {
-  return await axios.get(API_URL, {
+  return await API.get('/users', {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -3,34 +3,65 @@ import { AuthContext } from '../context/AuthContext'
 import { getAllTasks } from '../services/taskService'
 
 function DashboardPage() {
-  // Get token from AuthContext so we can call protected backend endpoints
+  // Get the authenticated user's details from the AuthContext
+  // These values are needed to access protected backend endpoints
   const { token, email, role } = useContext(AuthContext)
 
-  // Store tasks from backend
+  // Store tasks retrieved from the backend
   const [tasks, setTasks] = useState([])
 
-  // Store error message if task loading fails
+  // Store error message if dashboard data fails to load
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Load tasks when dashboard opens
+  // Load dashboard data only after the user has been authenticated
   useEffect(() => {
-    loadDashboardData()
-  }, [])
+    if (token) {
+      loadDashboardData()
+    }
+  }, [token])
 
-  // Get tasks from backend
+  // Retrieve all tasks from the backend
   const loadDashboardData = async () => {
     try {
+      // Clear any previous error message
+      setErrorMessage('')
+
+      // Send request to the backend
       const response = await getAllTasks(token)
-      setTasks(response.data)
+
+      // Ensure the backend returned an array of tasks.
+      // Some APIs return the array directly while others wrap it
+      // inside an object (e.g. { tasks: [...] }).
+      const taskData = Array.isArray(response.data)
+        ? response.data
+        : response.data?.tasks
+
+      // Prevent runtime errors if the backend response is invalid
+      if (!Array.isArray(taskData)) {
+        throw new Error('Invalid task data received from backend.')
+      }
+
+      // Update the dashboard with the retrieved tasks
+      setTasks(taskData)
     } catch (error) {
+      console.error('Failed to load dashboard data:', error)
+
+      // Reset tasks and display an error message to the user
+      setTasks([])
       setErrorMessage('Unable to load dashboard data.')
     }
   }
 
-  // Count tasks by status
+  // Calculate task statistics for the dashboard
   const totalTasks = tasks.length
-  const pendingTasks = tasks.filter((task) => task.status === 'PENDING').length
-  const startedTasks = tasks.filter((task) => task.status === 'STARTED').length
+  const pendingTasks = tasks.filter(
+    (task) => task.status === 'PENDING'
+  ).length
+
+  const startedTasks = tasks.filter(
+    (task) => task.status === 'STARTED'
+  ).length
+
   const completedTasks = tasks.filter(
     (task) => task.status === 'COMPLETED'
   ).length

@@ -1,20 +1,11 @@
-import axios from 'axios'
+import API from '../config/axios.js'
 
-// Base URL for user authentication endpoints in the Spring Boot backend
-const API_URL = 'http://localhost:8080/users'
-
-// Sends login data to the backend
-// Expected data format:
-// {
-//   email: "user@email.com",
-//   password: "password"
-// }
+// Sends login data to the backend (email and password) and returns the response from the backend)
 export const loginUser = async (loginData) => {
-  return await axios.post(`${API_URL}/login`, loginData)
+  return await API.post('/users/login', loginData)
 }
 
-// Sends registration data to the backend
-// backend creates users using POST /users
+// Sends registration data to the backend ()
 export const registerUser = async (registerData) => {
-  return await axios.post(API_URL, registerData)
+  return await API.post('/users', registerData)
 }

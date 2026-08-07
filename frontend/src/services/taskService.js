@@ -1,11 +1,8 @@
-import axios from 'axios'
-
-// Backend task API base URL
-const API_URL = 'http://localhost:8080/tasks'
+import API from '../config/axios.js' // Axios instance with base URL and timeout configured
 
 // Get all tasks from backend
 export const getAllTasks = async (token) => {
-  return await axios.get(API_URL, {
+  return await API.get('/tasks', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -14,7 +11,7 @@ export const getAllTasks = async (token) => {
 
 // Create a new task in backend
 export const createTask = async (taskData, token) => {
-  return await axios.post(API_URL, taskData, {
+  return await API.post('/tasks', taskData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -23,7 +20,7 @@ export const createTask = async (taskData, token) => {
 
 // Update an existing task
 export const updateTask = async (taskId, taskData, token) => {
-  return await axios.put(`${API_URL}/${taskId}`, taskData, {
+  return await API.put(`/tasks/${taskId}`, taskData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -32,7 +29,7 @@ export const updateTask = async (taskId, taskData, token) => {
 
 // Delete a task
 export const deleteTask = async (taskId, token) => {
-  return await axios.delete(`${API_URL}/${taskId}`, {
+  return await API.delete(`/tasks/${taskId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -41,7 +38,7 @@ export const deleteTask = async (taskId, token) => {
 
 // Assign a task to a user
 export const assignTaskToUser = async (taskId, userId, token) => {
-  return await axios.put(`${API_URL}/${taskId}/assign/${userId}`, null, {
+  return await API.put(`/tasks/${taskId}/assign/${userId}`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
