@@ -64,7 +64,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "MANAGER")
 
                         // Every other endpoint requires valid JWT authentication
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()// The reason why azure could not open the api
                 )
 
                 // Do not create server-side sessions because JWT is stateless
@@ -91,7 +91,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:5174",
-                "http://localhost:5175"
+                "http://localhost:5175",
+                "https://delightful-smoke-0ac2d0f0f.7.azurestaticapps.net"
         ));
 
         // Allow common HTTP methods
