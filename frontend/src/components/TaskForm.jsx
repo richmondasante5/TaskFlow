@@ -1,37 +1,62 @@
 function TaskForm({
+  // Task name state
   taskName,
   setTaskName,
+
+  // Task description state
   taskDescription,
   setTaskDescription,
+
+  // Function that creates a task
   handleCreateTask,
 }) {
   return (
-    <div>
-      <h2>Create Task</h2>
+    <form
+      onSubmit={handleCreateTask}
+      className="space-y-5"
+    >
+      {/* Task Name */}
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Task Name
+        </label>
 
-      <form onSubmit={handleCreateTask}>
-        <div>
-          <label>Task Name</label>
-          <input
-            type="text"
-            value={taskName}
-            onChange={(event) => setTaskName(event.target.value)}
-            required
-          />
-        </div>
+        <input
+          type="text"
+          value={taskName}
+          onChange={(event) => setTaskName(event.target.value)}
+          placeholder="Enter task name..."
+          required
+          className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
 
-        <div>
-          <label>Task Description</label>
-          <textarea
-            value={taskDescription}
-            onChange={(event) => setTaskDescription(event.target.value)}
-            required
-          />
-        </div>
+      {/* Task Description */}
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          Task Description
+        </label>
 
-        <button type="submit">Create Task</button>
-      </form>
-    </div>
+        <textarea
+          rows="4"
+          value={taskDescription}
+          onChange={(event) => setTaskDescription(event.target.value)}
+          placeholder="Describe the task..."
+          required
+          className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        />
+      </div>
+
+      {/* Create button */}
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+        >
+          Create Task
+        </button>
+      </div>
+    </form>
   )
 }
 
