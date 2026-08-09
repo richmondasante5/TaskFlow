@@ -2,135 +2,126 @@ function TaskTable({
   // List of tasks coming from TasksPage
   tasks,
 
-  // ID of the task currently being edited
-  editingTaskId,
-
-  // Edit form values
-  editTaskName,
-  setEditTaskName,
-  editTaskDescription,
-  setEditTaskDescription,
-  editStatus,
-  setEditStatus,
-
   // Functions passed from TasksPage
   handleEditClick,
-  handleUpdateTask,
-  handleCancelEdit,
   handleDeleteTask,
 }) {
+  // Return Tailwind styles based on task status
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'COMPLETED':
+        return 'bg-green-100 text-green-700'
+
+      case 'STARTED':
+        return 'bg-blue-100 text-blue-700'
+
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-700'
+
+      default:
+        return 'bg-gray-100 text-gray-700'
+    }
+  }
+
   return (
-    <div>
-      <h2>Task List</h2>
+    // Allow horizontal scrolling on smaller screens
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
 
-      {/* Show message when there are no tasks */}
-      {tasks.length === 0 && <p>No tasks found.</p>}
+        {/* Table headings */}
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              ID
+            </th>
 
-      {/* Show table only when tasks exist */}
-      {tasks.length > 0 && (
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Task Name</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Assigned To</th>
-              <th>Actions</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Task
+            </th>
+
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Description
+            </th>
+
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Status
+            </th>
+
+            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Assigned To
+            </th>
+
+            <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody className="divide-y divide-gray-100 bg-white">
+
+          {/* Convert every task object into a table row */}
+          {tasks.map((task) => (
+            <tr
+              key={task.id}
+              className="transition hover:bg-gray-50"
+            >
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                #{task.id}
+              </td>
+
+              <td className="whitespace-nowrap px-6 py-4">
+                <p className="font-medium text-gray-900">
+                  {task.taskName}
+                </p>
+              </td>
+
+              <td className="max-w-sm px-6 py-4 text-sm text-gray-600">
+                {task.taskDescription || 'No description'}
+              </td>
+
+              <td className="whitespace-nowrap px-6 py-4">
+                {/* Display task status using a visual badge */}
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyle(
+                    task.status
+                  )}`}
+                >
+                  {task.status}
+                </span>
+              </td>
+
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                {task.assignedTo?.email || 'Not Assigned'}
+              </td>
+
+              <td className="whitespace-nowrap px-6 py-4 text-right">
+                <div className="flex justify-end gap-2">
+
+                  {/* Open the edit modal for this task */}
+                  <button
+                    type="button"
+                    onClick={() => handleEditClick(task)}
+                    className="rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
+                  >
+                    Edit
+                  </button>
+
+                  {/* TasksPage handles the delete confirmation */}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+              </td>
             </tr>
-          </thead>
+          ))}
 
-          <tbody>
-            {/* Loop through each task and create a table row */}
-            {tasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.id}</td>
-
-                {/* If this task is being edited, show input; otherwise show text */}
-                <td>
-                  {editingTaskId === task.id ? (
-                    <input
-                      type="text"
-                      value={editTaskName}
-                      onChange={(event) =>
-                        setEditTaskName(event.target.value)
-                      }
-                    />
-                  ) : (
-                    task.taskName
-                  )}
-                </td>
-
-                {/* If this task is being edited, show textarea; otherwise show description */}
-                <td>
-                  {editingTaskId === task.id ? (
-                    <textarea
-                      value={editTaskDescription}
-                      onChange={(event) =>
-                        setEditTaskDescription(event.target.value)
-                      }
-                    />
-                  ) : (
-                    task.taskDescription
-                  )}
-                </td>
-
-                {/* If editing, allow status change; otherwise display status badge */}
-                <td>
-                  {editingTaskId === task.id ? (
-                    <select
-                      value={editStatus}
-                      onChange={(event) => setEditStatus(event.target.value)}
-                    >
-                      <option value="PENDING">PENDING</option>
-                      <option value="STARTED">STARTED</option>
-                      <option value="COMPLETED">COMPLETED</option>
-                    </select>
-                  ) : (
-                    <>
-                      {task.status === 'PENDING' && <span>🟡 PENDING</span>}
-                      {task.status === 'STARTED' && <span>🔵 STARTED</span>}
-                      {task.status === 'COMPLETED' && (
-                        <span>🟢 COMPLETED</span>
-                      )}
-                    </>
-                  )}
-                </td>
-
-                {/* Show assigned user email if task is assigned */}
-                <td>
-                  {task.assignedTo ? task.assignedTo.email : 'Not Assigned'}
-                </td>
-
-                {/* Show Update/Cancel in edit mode, otherwise Edit/Delete */}
-                <td>
-                  {editingTaskId === task.id ? (
-                    <>
-                      <button onClick={() => handleUpdateTask(task)}>
-                        Update
-                      </button>
-
-                      <button onClick={handleCancelEdit}>
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={() => handleEditClick(task)}>
-                        Edit
-                      </button>
-
-                      <button onClick={() => handleDeleteTask(task.id)}>
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        </tbody>
+      </table>
     </div>
   )
 }
