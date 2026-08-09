@@ -1,5 +1,5 @@
 function EditTaskModal({
-  // Current values of the task being edited
+  // Edit form state passed from TasksPage
   editTaskName,
   setEditTaskName,
   editTaskDescription,
@@ -12,11 +12,11 @@ function EditTaskModal({
   handleCancelEdit,
 }) {
   return (
-    // Full-screen overlay behind the modal
+    // Dark overlay covering the page while the modal is open
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
 
-      {/* Modal box */}
-      <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">
+      {/* Modal container */}
+      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
 
         {/* Modal heading */}
         <div className="mb-6">
@@ -25,16 +25,15 @@ function EditTaskModal({
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Update the task details and save your changes.
+            Update the task information below.
           </p>
         </div>
 
-        {/* Edit form fields */}
-        <div className="space-y-4">
+        {/* Edit fields */}
+        <div className="space-y-5">
 
-          {/* Task name */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Task Name
             </label>
 
@@ -44,13 +43,12 @@ function EditTaskModal({
               onChange={(event) =>
                 setEditTaskName(event.target.value)
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
-          {/* Task description */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Description
             </label>
 
@@ -60,13 +58,12 @@ function EditTaskModal({
               onChange={(event) =>
                 setEditTaskDescription(event.target.value)
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
-          {/* Task status */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Status
             </label>
 
@@ -75,7 +72,7 @@ function EditTaskModal({
               onChange={(event) =>
                 setEditStatus(event.target.value)
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="PENDING">Pending</option>
               <option value="STARTED">Started</option>
@@ -85,28 +82,25 @@ function EditTaskModal({
 
         </div>
 
-        {/* Modal buttons */}
-        <div className="mt-6 flex justify-end gap-3">
-
-          {/* Close modal without saving */}
+        {/* Modal action buttons */}
+        <div className="mt-7 flex justify-end gap-3">
           <button
             type="button"
             onClick={handleCancelEdit}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </button>
 
-          {/* Save updated task */}
           <button
             type="button"
             onClick={handleUpdateTask}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
           >
             Save Changes
           </button>
-
         </div>
+
       </div>
     </div>
   )

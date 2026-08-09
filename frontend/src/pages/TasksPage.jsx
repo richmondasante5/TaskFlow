@@ -16,15 +16,13 @@ import TaskTable from '../components/TaskTable'
 import EditTaskModal from '../components/EditTaskModal'
 
 function TasksPage() {
-  // Get authenticated user information and logout function
-  // from the shared AuthContext
+  // Get authenticated user data from AuthContext
   const { token, email, role, logout } = useContext(AuthContext)
 
-  // Store tasks retrieved from the backend
+  // Store tasks from backend
   const [tasks, setTasks] = useState([])
 
-  // Store users retrieved from the backend
-  // These users are used when assigning tasks
+  // Store users for task assignment
   const [users, setUsers] = useState([])
 
   // Create task form state
@@ -35,7 +33,7 @@ function TasksPage() {
   // null means the edit modal is closed
   const [editingTask, setEditingTask] = useState(null)
 
-  // Edit task form state
+  // Edit form state
   const [editTaskName, setEditTaskName] = useState('')
   const [editTaskDescription, setEditTaskDescription] = useState('')
   const [editStatus, setEditStatus] = useState('PENDING')
@@ -44,16 +42,18 @@ function TasksPage() {
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Used to navigate between React routes
+  // Used to move between React routes
   const navigate = useNavigate()
 
-  // Load tasks and users when the page first opens
+  // Load tasks and users when the page opens
   useEffect(() => {
-    loadTasks()
-    loadUsers()
-  }, [])
+    if (token) {
+      loadTasks()
+      loadUsers()
+    }
+  }, [token])
 
-  // Retrieve all tasks from the Spring Boot backend
+  // Retrieve all tasks from backend
   const loadTasks = async () => {
     try {
       setLoading(true)
@@ -61,7 +61,6 @@ function TasksPage() {
 
       const response = await getAllTasks(token)
 
-      // Support either a direct array or wrapped task response
       const taskData = Array.isArray(response.data)
         ? response.data
         : response.data?.tasks
@@ -75,7 +74,7 @@ function TasksPage() {
     }
   }
 
-  // Retrieve users for the assignment dropdown
+  // Retrieve users for task assignment
   const loadUsers = async () => {
     try {
       const response = await getAllUsers(token)
@@ -87,8 +86,6 @@ function TasksPage() {
       setUsers(Array.isArray(userData) ? userData : [])
     } catch (error) {
       console.error('Failed to load users:', error)
-
-      // Do not stop task loading if user loading fails
       setUsers([])
     }
   }
@@ -107,7 +104,7 @@ function TasksPage() {
 
       await createTask(newTask, token)
 
-      // Clear the form after successful creation
+      // Reset form after successful creation
       setTaskName('')
       setTaskDescription('')
 
@@ -118,8 +115,7 @@ function TasksPage() {
     }
   }
 
-  // Open the edit modal and copy the selected task
-  // values into the edit form state
+  // Open edit modal and populate it with selected task data
   const handleEditClick = (task) => {
     setEditingTask(task)
     setEditTaskName(task.taskName ?? '')
@@ -127,7 +123,7 @@ function TasksPage() {
     setEditStatus(task.status ?? 'PENDING')
   }
 
-  // Close and reset the edit modal
+  // Close edit modal and reset edit state
   const handleCancelEdit = () => {
     setEditingTask(null)
     setEditTaskName('')
@@ -135,7 +131,7 @@ function TasksPage() {
     setEditStatus('PENDING')
   }
 
-  // Update the task currently opened in the modal
+  // Update the currently selected task
   const handleUpdateTask = async () => {
     if (!editingTask) return
 
@@ -151,7 +147,10 @@ function TasksPage() {
 
       await updateTask(editingTask.id, updatedTask, token)
 
+      // Close modal after successful update
       handleCancelEdit()
+
+      // Refresh task list
       await loadTasks()
     } catch (error) {
       console.error('Failed to update task:', error)
@@ -175,7 +174,7 @@ function TasksPage() {
     }
   }
 
-  // Ask the user for confirmation before deleting a task
+  // Ask for confirmation before deleting a task
   const handleDeleteTask = async (taskId) => {
     const confirmed = window.confirm(
       'Delete this task?\n\nThis action cannot be undone.'
@@ -195,14 +194,13 @@ function TasksPage() {
     }
   }
 
-  // Clear authentication data and return to login
+  // Logout and return to login page
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
   return (
-    // Main Tasks page container
     <div className="min-h-screen bg-gray-50 p-6 md:p-8">
 
       {/* Page header */}
@@ -221,11 +219,10 @@ function TasksPage() {
           </p>
         </div>
 
-        {/* Logout button */}
         <button
           type="button"
           onClick={handleLogout}
-          className="w-fit rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100"
+          className="w-fit rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100"
         >
           Logout
         </button>
@@ -271,13 +268,11 @@ function TasksPage() {
           </p>
         </div>
 
-        {/* Loading state */}
         {loading ? (
           <div className="px-6 py-12 text-center text-gray-500">
             Loading tasks...
           </div>
         ) : tasks.length === 0 ? (
-          // Empty state
           <div className="px-6 py-12 text-center">
             <p className="font-medium text-gray-700">
               No tasks available.
@@ -288,7 +283,6 @@ function TasksPage() {
             </p>
           </div>
         ) : (
-          // Task table
           <TaskTable
             tasks={tasks}
             users={users}
@@ -299,7 +293,7 @@ function TasksPage() {
         )}
       </div>
 
-      {/* Edit modal is rendered only when a task is selected */}
+      {/* Show edit modal only when a task has been selected */}
       {editingTask && (
         <EditTaskModal
           editTaskName={editTaskName}
