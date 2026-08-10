@@ -52,6 +52,9 @@ function TasksPage() {
   // Stores errors that should be shown to the user
   const [errorMessage, setErrorMessage] = useState('')
 
+  // Stores the current task search text
+  const [searchTerm, setSearchTerm] = useState('')
+
   // Used to navigate between React routes
   const navigate = useNavigate()
 
@@ -99,13 +102,13 @@ function TasksPage() {
   // ============================
 
   const handleCreateTask = async (event) => {
-    // Prevent the browser from refreshing when the form is submitted
+    // Prevent browser refresh when the form is submitted
     event.preventDefault()
 
     try {
       setErrorMessage('')
 
-      // Build the object that will be sent to Spring Boot
+      // Build the task object sent to the backend
       const newTask = {
         taskName,
         taskDescription,
@@ -114,7 +117,7 @@ function TasksPage() {
       // Send POST request through taskService
       await createTask(newTask, token)
 
-      // Clear the form after successful creation
+      // Clear form after successful creation
       setTaskName('')
       setTaskDescription('')
 
@@ -130,7 +133,7 @@ function TasksPage() {
   // Edit Task
   // ============================
 
-  // Open the modal and copy the selected task into edit state
+  // Open the modal and copy selected task data into edit state
   const handleEditClick = (task) => {
     setEditingTask(task)
 
@@ -139,7 +142,7 @@ function TasksPage() {
     setEditStatus(task.status ?? 'PENDING')
   }
 
-  // Close the edit modal and clear its state
+  // Close the edit modal and reset edit state
   const handleCancelEdit = () => {
     setEditingTask(null)
 
@@ -148,15 +151,15 @@ function TasksPage() {
     setEditStatus('PENDING')
   }
 
-  // Send updated task information to the backend
+  // Send updated task data to the backend
   const handleUpdateTask = async () => {
-    // Do nothing if no task is currently selected
+    // Stop if no task is selected
     if (!editingTask) return
 
     try {
       setErrorMessage('')
 
-      // Keep the existing task properties,
+      // Keep existing task properties
       // but replace the fields the user edited
       const updatedTask = {
         ...editingTask,
@@ -174,7 +177,7 @@ function TasksPage() {
       // Close modal after successful update
       handleCancelEdit()
 
-      // Refresh table with latest backend data
+      // Refresh task list
       await loadTasks()
     } catch (error) {
       console.error('Failed to update task:', error)
@@ -187,12 +190,12 @@ function TasksPage() {
   // ============================
 
   const handleDeleteTask = async (taskId) => {
-    // Ask the user before permanently deleting the task
+    // Ask for confirmation before permanently deleting
     const confirmed = window.confirm(
       'Are you sure you want to delete this task?\n\nThis action cannot be undone.'
     )
 
-    // Stop if the user selects Cancel
+    // Stop if user selects Cancel
     if (!confirmed) return
 
     try {
@@ -214,12 +217,29 @@ function TasksPage() {
   // ============================
 
   const handleLogout = () => {
-    // Clear authentication information from AuthContext
+    // Clear authentication information
     logout()
 
-    // Return user to the login route
+    // Redirect user to login route
     navigate('/login')
   }
+
+  // ============================
+  // Search Tasks
+  // ============================
+
+  // Create a new array containing tasks
+  // whose name or description matches the search text
+  const filteredTasks = tasks.filter((task) => {
+    // Convert search text to lowercase
+    // so the search is not case-sensitive
+    const search = searchTerm.toLowerCase()
+
+    return (
+      task.taskName?.toLowerCase().includes(search) ||
+      task.taskDescription?.toLowerCase().includes(search)
+    )
+  })
 
   return (
     // Main Tasks page container
@@ -239,7 +259,7 @@ function TasksPage() {
             Create, update and manage your tasks.
           </p>
 
-          {/* User information comes from AuthContext */}
+          {/* User information from AuthContext */}
           <p className="mt-2 text-sm text-gray-600">
             {email} · {role}
           </p>
@@ -291,44 +311,63 @@ function TasksPage() {
       </div>
 
       {/* ============================
-          Task Table
+          All Tasks + Search + Table
       ============================ */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
-        <div className="border-b border-gray-200 px-6 py-5">
-          <h2 className="text-lg font-semibold text-gray-900">
-            All Tasks
-          </h2>
+        {/* All Tasks header + search */}
+        <div className="flex flex-col gap-4 border-b border-gray-200 px-6 py-5 md:flex-row md:items-center md:justify-between">
 
-          <p className="mt-1 text-sm text-gray-500">
-            View, update or delete tasks.
-          </p>
+          {/* Section title */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              All Tasks
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              View, update or delete tasks.
+            </p>
+          </div>
+
+          {/* Search box */}
+          <div className="w-full md:w-80">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(event) =>
+                setSearchTerm(event.target.value)
+              }
+              placeholder="Search tasks..."
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
         </div>
 
-        {/* Show loading state while request is running */}
+        {/* Loading state */}
         {loading ? (
           <div className="px-6 py-12 text-center text-gray-500">
             Loading tasks...
           </div>
 
-        ) : tasks.length === 0 ? (
+        ) : filteredTasks.length === 0 ? (
 
-          // Show empty state when there are no tasks
+          // Empty/search result state
           <div className="px-6 py-12 text-center">
             <p className="font-medium text-gray-700">
-              No tasks available.
+              No matching tasks found.
             </p>
 
             <p className="mt-1 text-sm text-gray-500">
-              Create your first task using the form above.
+              Try searching with a different task name or description.
             </p>
           </div>
 
         ) : (
 
-          // Pass task data and action functions to TaskTable
+          // Display filtered tasks in the table
           <TaskTable
-            tasks={tasks}
+            tasks={filteredTasks}
             handleEditClick={handleEditClick}
             handleDeleteTask={handleDeleteTask}
           />
@@ -341,7 +380,7 @@ function TasksPage() {
           Edit Task Modal
       ============================ */}
 
-      {/* Modal appears only when editingTask contains a task */}
+      {/* Modal appears only when a task is selected */}
       {editingTask && (
         <EditTaskModal
           editTaskName={editTaskName}

@@ -13,7 +13,7 @@ function EditTaskModal({
 }) {
   return (
     // Fixed overlay covers the whole browser window
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/50 p-4">
 
       {/* Modal */}
       <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl">
