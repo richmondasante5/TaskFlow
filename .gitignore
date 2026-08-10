@@ -33,3 +33,6 @@ build/
 .vscode/
 
 frontend-backup/
+
+taskflow-appsettings-backup.json
+taskflow-errors.txt
