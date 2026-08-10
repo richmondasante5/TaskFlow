@@ -1,8 +1,12 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
 
 import DashboardPage from '../pages/DashboardPage'
 import LoginPage from '../pages/LoginPage'
-import RegisterPage from '../pages/RegisterPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import TasksPage from '../pages/TasksPage'
 import ProtectedRoute from './ProtectedRoute'
@@ -10,23 +14,65 @@ import ProtectedRoute from './ProtectedRoute'
 function AppRoutes() {
   return (
     <BrowserRouter>
-      <Routes>
-        
-        {/* Public routes */}
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
 
-        {/* Protected route */}
-        <Route path="/tasks" element={ <ProtectedRoute>
+      <Routes>
+
+        {/* ============================
+            Default Route
+        ============================ */}
+
+        {/* Send visitors to the Login page */}
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
+
+        {/* ============================
+            Public Routes
+        ============================ */}
+
+        {/* Login does not require authentication */}
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
+
+        {/* ============================
+            Protected Routes
+        ============================ */}
+
+        {/* Dashboard requires authentication */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Tasks requires authentication */}
+        <Route
+          path="/tasks"
+          element={
+            <ProtectedRoute>
               <TasksPage />
             </ProtectedRoute>
           }
         />
 
-        {/* Any unknown route */}
-        <Route path="*" element={<NotFoundPage />} />
+        {/* ============================
+            Unknown Routes
+        ============================ */}
+
+        {/* Any URL that does not match above */}
+        <Route
+          path="*"
+          element={<NotFoundPage />}
+        />
+
       </Routes>
+
     </BrowserRouter>
   )
 }
