@@ -18,10 +18,7 @@ function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Protected route */}
-        <Route
-          path="/tasks"
-          element={
-            <ProtectedRoute>
+        <Route path="/tasks" element={ <ProtectedRoute>
               <TasksPage />
             </ProtectedRoute>
           }
