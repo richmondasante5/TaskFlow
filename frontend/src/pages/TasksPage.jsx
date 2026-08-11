@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 
 import {
@@ -7,7 +6,10 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  assignTaskToUser,
 } from '../services/taskService'
+
+import { getAllUsers } from '../services/userService'
 
 import TaskForm from '../components/TaskForm'
 import TaskTable from '../components/TaskTable'
@@ -15,62 +17,73 @@ import EditTaskModal from '../components/EditTaskModal'
 import Navbar from '../components/Navbar'
 
 function TasksPage() {
-  // Get authenticated user information and logout function
-  // from the shared AuthContext
-  const { token, email, role, logout } = useContext(AuthContext)
+  // Get authenticated user information from AuthContext
+  const { token, email, role } = useContext(AuthContext)
 
-  // Stores all tasks retrieved from the backend
+  // ============================
+  // Main Data State
+  // ============================
+
+  // Stores tasks returned by backend
   const [tasks, setTasks] = useState([])
+
+  // Stores users for task assignment
+  // Only ADMIN loads this list
+  const [users, setUsers] = useState([])
 
   // ============================
   // Create Task State
   // ============================
 
-  // Stores the values entered in the create-task form
   const [taskName, setTaskName] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
+
+  // Stores user selected during task creation
+  const [assignedUserId, setAssignedUserId] = useState('')
 
   // ============================
   // Edit Task State
   // ============================
 
-  // Stores the task selected for editing
-  // null means the edit modal is closed
+  // Stores task currently selected for editing
+  // null means modal is closed
   const [editingTask, setEditingTask] = useState(null)
 
-  // Stores values displayed inside the edit modal
   const [editTaskName, setEditTaskName] = useState('')
   const [editTaskDescription, setEditTaskDescription] = useState('')
   const [editStatus, setEditStatus] = useState('PENDING')
+
+  // Stores selected assignee inside edit modal
+  const [editAssignedUserId, setEditAssignedUserId] = useState('')
 
   // ============================
   // UI State
   // ============================
 
-  // Controls the loading message while tasks are being retrieved
   const [loading, setLoading] = useState(true)
-
-  // Stores errors that should be shown to the user
   const [errorMessage, setErrorMessage] = useState('')
-
-  // Stores the current task search text
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Used to navigate between React routes
-  const navigate = useNavigate()
+  // ============================
+  // Initial Page Load
+  // ============================
+
+  useEffect(() => {
+    if (token) {
+      // Every authenticated user can load tasks
+      loadTasks()
+
+      // Only ADMIN can load all users
+      if (role === 'ADMIN') {
+        loadUsers()
+      }
+    }
+  }, [token, role])
 
   // ============================
   // Load Tasks
   // ============================
 
-  // Load tasks whenever a valid token becomes available
-  useEffect(() => {
-    if (token) {
-      loadTasks()
-    }
-  }, [token])
-
-  // Retrieve all tasks from the Spring Boot backend
   const loadTasks = async () => {
     try {
       setLoading(true)
@@ -78,15 +91,10 @@ function TasksPage() {
 
       const response = await getAllTasks(token)
 
-      // Support either:
-      // [...]
-      // or
-      // { tasks: [...] }
       const taskData = Array.isArray(response.data)
         ? response.data
         : response.data?.tasks
 
-      // Make sure tasks state always contains an array
       setTasks(Array.isArray(taskData) ? taskData : [])
     } catch (error) {
       console.error('Failed to load tasks:', error)
@@ -99,68 +107,124 @@ function TasksPage() {
   }
 
   // ============================
+  // Load Users
+  // ============================
+
+  const loadUsers = async () => {
+    try {
+      const response = await getAllUsers(token)
+
+      const userData = Array.isArray(response.data)
+        ? response.data
+        : response.data?.users
+
+      setUsers(Array.isArray(userData) ? userData : [])
+    } catch (error) {
+      console.error('Failed to load users:', error)
+
+      // User loading should not break the whole Tasks page
+      setUsers([])
+    }
+  }
+
+  // ============================
   // Create Task
   // ============================
 
   const handleCreateTask = async (event) => {
-    // Prevent browser refresh
     event.preventDefault()
 
     try {
       setErrorMessage('')
 
-      // Build task object to send to backend
+      // Build task object
       const newTask = {
         taskName,
         taskDescription,
       }
 
-      // Send POST request
-      await createTask(newTask, token)
+      // Create task first
+      const response = await createTask(newTask, token)
 
-      // Clear form
+      // Try to get newly-created task ID
+      // Supports:
+      // { id: ... }
+      // or
+      // { task: { id: ... } }
+      const createdTaskId =
+        response.data?.id ??
+        response.data?.task?.id
+
+      // If ADMIN selected a user, assign the new task
+      if (
+        role === 'ADMIN' &&
+        assignedUserId &&
+        createdTaskId
+      ) {
+        await assignTaskToUser(
+          createdTaskId,
+          assignedUserId,
+          token
+        )
+      }
+
+      // Reset create form
       setTaskName('')
       setTaskDescription('')
+      setAssignedUserId('')
 
-      // Refresh tasks
+      // Refresh task list
       await loadTasks()
     } catch (error) {
       console.error('Failed to create task:', error)
+
       setErrorMessage('Unable to create task.')
     }
   }
 
   // ============================
-  // Edit Task
+  // Open Edit Modal
   // ============================
 
-  // Open modal and copy selected task data into edit state
   const handleEditClick = (task) => {
     setEditingTask(task)
 
+    // Copy existing task values into edit state
     setEditTaskName(task.taskName ?? '')
     setEditTaskDescription(task.taskDescription ?? '')
     setEditStatus(task.status ?? 'PENDING')
+
+    // Preselect current assignee if one exists
+    setEditAssignedUserId(
+      task.assignedTo?.id
+        ? String(task.assignedTo.id)
+        : ''
+    )
   }
 
-  // Close modal and reset edit state
+  // ============================
+  // Close Edit Modal
+  // ============================
+
   const handleCancelEdit = () => {
     setEditingTask(null)
 
     setEditTaskName('')
     setEditTaskDescription('')
     setEditStatus('PENDING')
+    setEditAssignedUserId('')
   }
 
-  // Update selected task
+  // ============================
+  // Update Task
+  // ============================
+
   const handleUpdateTask = async () => {
-    // Stop if no task is selected
     if (!editingTask) return
 
     try {
       setErrorMessage('')
 
-      // Keep existing properties but replace edited values
       const updatedTask = {
         ...editingTask,
         taskName: editTaskName,
@@ -168,19 +232,33 @@ function TasksPage() {
         status: editStatus,
       }
 
+      // Update normal task information
       await updateTask(
         editingTask.id,
         updatedTask,
         token
       )
 
+      // ADMIN can also change task assignment
+      if (
+        role === 'ADMIN' &&
+        editAssignedUserId
+      ) {
+        await assignTaskToUser(
+          editingTask.id,
+          editAssignedUserId,
+          token
+        )
+      }
+
       // Close modal
       handleCancelEdit()
 
-      // Refresh tasks
+      // Refresh task list
       await loadTasks()
     } catch (error) {
       console.error('Failed to update task:', error)
+
       setErrorMessage('Unable to update task.')
     }
   }
@@ -190,55 +268,30 @@ function TasksPage() {
   // ============================
 
   const handleDeleteTask = async (taskId) => {
-    // Ask before permanently deleting the task
     const confirmed = window.confirm(
       'Are you sure you want to delete this task?\n\nThis action cannot be undone.'
     )
 
-    // Stop if user clicks Cancel
     if (!confirmed) return
 
     try {
       setErrorMessage('')
 
-      // Send DELETE request
       await deleteTask(taskId, token)
 
-      // Refresh tasks
       await loadTasks()
     } catch (error) {
       console.error('Failed to delete task:', error)
+
       setErrorMessage('Unable to delete task.')
     }
-  }
-
-  // ============================
-  // Logout
-  // ============================
-
-  const handleLogout = () => {
-    // Ask before logging out
-    const confirmed = window.confirm(
-      'Are you sure you want to logout?'
-    )
-
-    if (!confirmed) return
-
-    // Clear authentication data
-    logout()
-
-    // Return to login page
-    navigate('/login')
   }
 
   // ============================
   // Search Tasks
   // ============================
 
-  // Filter tasks using task name or description
   const filteredTasks = tasks.filter((task) => {
-    // Convert search text to lowercase
-    // so search is not case-sensitive
     const search = searchTerm.toLowerCase()
 
     return (
@@ -249,10 +302,9 @@ function TasksPage() {
 
   return (
     <>
-      {/* Shared navigation for authenticated pages */}
+      {/* Shared navigation */}
       <Navbar />
 
-      {/* Main Tasks page container */}
       <div className="min-h-screen bg-gray-50 p-6 md:p-8">
 
         {/* ============================
@@ -264,18 +316,15 @@ function TasksPage() {
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            Create, update and manage your tasks.
+            Create, assign, update and manage your tasks.
           </p>
 
-          {/* User information from AuthContext */}
           <p className="mt-2 text-sm text-gray-600">
             {email} · {role}
           </p>
         </div>
 
-        {/* ============================
-            Error Message
-        ============================ */}
+        {/* Error message */}
         {errorMessage && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {errorMessage}
@@ -302,20 +351,26 @@ function TasksPage() {
             setTaskName={setTaskName}
             taskDescription={taskDescription}
             setTaskDescription={setTaskDescription}
+
+            // Assignment props
+            users={users}
+            assignedUserId={assignedUserId}
+            setAssignedUserId={setAssignedUserId}
+            role={role}
+
             handleCreateTask={handleCreateTask}
           />
 
         </div>
 
         {/* ============================
-            All Tasks + Search + Table
+            Tasks Table
         ============================ */}
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
-          {/* All Tasks header + search */}
+          {/* Header + Search */}
           <div className="flex flex-col gap-4 border-b border-gray-200 px-6 py-5 md:flex-row md:items-center md:justify-between">
 
-            {/* Section title */}
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
                 All Tasks
@@ -326,7 +381,6 @@ function TasksPage() {
               </p>
             </div>
 
-            {/* Search box */}
             <div className="w-full md:w-80">
               <input
                 type="text"
@@ -341,16 +395,14 @@ function TasksPage() {
 
           </div>
 
-          {/* Loading state */}
+          {/* Task results */}
           {loading ? (
             <div className="px-6 py-12 text-center text-gray-500">
               Loading tasks...
             </div>
-
           ) : filteredTasks.length === 0 ? (
-
-            // Empty/search result state
             <div className="px-6 py-12 text-center">
+
               <p className="font-medium text-gray-700">
                 No matching tasks found.
               </p>
@@ -358,17 +410,14 @@ function TasksPage() {
               <p className="mt-1 text-sm text-gray-500">
                 Try searching with a different task name or description.
               </p>
+
             </div>
-
           ) : (
-
-            // Display filtered tasks
             <TaskTable
               tasks={filteredTasks}
               handleEditClick={handleEditClick}
               handleDeleteTask={handleDeleteTask}
             />
-
           )}
 
         </div>
@@ -376,8 +425,6 @@ function TasksPage() {
         {/* ============================
             Edit Task Modal
         ============================ */}
-
-        {/* Modal appears only when a task is selected */}
         {editingTask && (
           <EditTaskModal
             editTaskName={editTaskName}
@@ -386,6 +433,13 @@ function TasksPage() {
             setEditTaskDescription={setEditTaskDescription}
             editStatus={editStatus}
             setEditStatus={setEditStatus}
+
+            // Assignment props
+            users={users}
+            editAssignedUserId={editAssignedUserId}
+            setEditAssignedUserId={setEditAssignedUserId}
+            role={role}
+
             handleUpdateTask={handleUpdateTask}
             handleCancelEdit={handleCancelEdit}
           />

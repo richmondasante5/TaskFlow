@@ -7,15 +7,21 @@ function EditTaskModal({
   editStatus,
   setEditStatus,
 
+  // Assignment data
+  users,
+  editAssignedUserId,
+  setEditAssignedUserId,
+  role,
+
   // Functions received from TasksPage
   handleUpdateTask,
   handleCancelEdit,
 }) {
   return (
-    // Fixed overlay covers the whole browser window
-    <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/50 p-4">
+    // Full-screen overlay
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 
-      {/* Modal */}
+      {/* Modal container */}
       <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl">
 
         {/* Modal header */}
@@ -79,18 +85,61 @@ function EditTaskModal({
               }
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
-              <option value="PENDING">Pending</option>
-              <option value="STARTED">Started</option>
-              <option value="COMPLETED">Completed</option>
+              <option value="PENDING">
+                Pending
+              </option>
+
+              <option value="STARTED">
+                Started
+              </option>
+
+              <option value="COMPLETED">
+                Completed
+              </option>
             </select>
           </div>
+
+          {/* Only ADMIN can change task assignment */}
+          {role === 'ADMIN' && (
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Assigned To
+              </label>
+
+              <select
+                value={editAssignedUserId}
+                onChange={(event) =>
+                  setEditAssignedUserId(event.target.value)
+                }
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              >
+                <option value="">
+                  Not Assigned
+                </option>
+
+                {/* Convert users into dropdown options */}
+                {users.map((user) => (
+                  <option
+                    key={user.id}
+                    value={user.id}
+                  >
+                    {user.email}
+                  </option>
+                ))}
+              </select>
+
+              <p className="mt-2 text-xs text-gray-500">
+                Select the user responsible for this task.
+              </p>
+            </div>
+          )}
 
         </div>
 
         {/* Modal footer */}
         <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
 
-          {/* Close without saving */}
+          {/* Close modal without saving */}
           <button
             type="button"
             onClick={handleCancelEdit}
@@ -99,7 +148,7 @@ function EditTaskModal({
             Cancel
           </button>
 
-          {/* Send update through TasksPage */}
+          {/* Save update */}
           <button
             type="button"
             onClick={handleUpdateTask}
@@ -109,6 +158,7 @@ function EditTaskModal({
           </button>
 
         </div>
+
       </div>
     </div>
   )
