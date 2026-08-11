@@ -1,5 +1,4 @@
 function EditTaskModal({
-  // Current editable values
   editTaskName,
   setEditTaskName,
   editTaskDescription,
@@ -7,25 +6,26 @@ function EditTaskModal({
   editStatus,
   setEditStatus,
 
-  // Assignment data
   users,
   editAssignedUserId,
   setEditAssignedUserId,
   role,
 
-  // Functions received from TasksPage
   handleUpdateTask,
   handleCancelEdit,
 }) {
   return (
-    // Full-screen overlay
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    // Full-screen dark overlay
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4">
 
       {/* Modal container */}
-      <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl">
+      <div className="flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
 
-        {/* Modal header */}
-        <div className="border-b border-gray-200 px-6 py-5">
+        {/* ============================
+            Modal Header
+        ============================ */}
+        <div className="shrink-0 border-b border-gray-200 px-5 py-4 sm:px-6 sm:py-5">
+
           <h2 className="text-xl font-bold text-gray-900">
             Update Task
           </h2>
@@ -33,12 +33,15 @@ function EditTaskModal({
           <p className="mt-1 text-sm text-gray-500">
             Modify the task information and save your changes.
           </p>
+
         </div>
 
-        {/* Editable fields */}
-        <div className="space-y-5 px-6 py-6">
+        {/* ============================
+            Scrollable Modal Content
+        ============================ */}
+        <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:space-y-5 sm:px-6 sm:py-6">
 
-          {/* Task name */}
+          {/* Task Name */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Task Name
@@ -55,14 +58,14 @@ function EditTaskModal({
             />
           </div>
 
-          {/* Description */}
+          {/* Task Description */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Description
             </label>
 
             <textarea
-              rows="5"
+              rows="4"
               value={editTaskDescription}
               onChange={(event) =>
                 setEditTaskDescription(event.target.value)
@@ -99,7 +102,10 @@ function EditTaskModal({
             </select>
           </div>
 
-          {/* Only ADMIN can change task assignment */}
+          {/* ============================
+              Task Assignment
+              ADMIN only
+          ============================ */}
           {role === 'ADMIN' && (
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -117,7 +123,6 @@ function EditTaskModal({
                   Not Assigned
                 </option>
 
-                {/* Convert users into dropdown options */}
                 {users.map((user) => (
                   <option
                     key={user.id}
@@ -136,10 +141,12 @@ function EditTaskModal({
 
         </div>
 
-        {/* Modal footer */}
-        <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+        {/* ============================
+            Modal Footer
+        ============================ */}
+        <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
 
-          {/* Close modal without saving */}
+          {/* Cancel */}
           <button
             type="button"
             onClick={handleCancelEdit}
@@ -148,7 +155,7 @@ function EditTaskModal({
             Cancel
           </button>
 
-          {/* Save update */}
+          {/* Save */}
           <button
             type="button"
             onClick={handleUpdateTask}

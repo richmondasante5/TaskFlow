@@ -305,7 +305,7 @@ function TasksPage() {
       {/* Shared navigation */}
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 p-6 md:p-8">
+      <div className="min-h-screen bg-gray-50 px-6 pb-8 pt-28 md:px-8">
 
         {/* ============================
             Page Header
