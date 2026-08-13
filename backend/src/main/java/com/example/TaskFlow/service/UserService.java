@@ -30,7 +30,6 @@ public class UserService {
 
     //creating a user
     public User createUser(UserRegisterRequest userRegisterRequest) {
-
         //creating User entity object
         User user = new User();
 

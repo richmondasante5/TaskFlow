@@ -9,39 +9,27 @@ import DashboardPage from '../pages/DashboardPage'
 import LoginPage from '../pages/LoginPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import TasksPage from '../pages/TasksPage'
+import UserPage from '../pages/UserPage'
 import ProtectedRoute from './ProtectedRoute'
 
 function AppRoutes() {
   return (
     <BrowserRouter>
-
       <Routes>
 
-        {/* ============================
-            Default Route
-        ============================ */}
-
-        {/* Send visitors to the Login page */}
+        {/* Redirect the default URL to login */}
         <Route
           path="/"
           element={<Navigate to="/login" replace />}
         />
 
-        {/* ============================
-            Public Routes
-        ============================ */}
-
-        {/* Login does not require authentication */}
+        {/* Public login route */}
         <Route
           path="/login"
           element={<LoginPage />}
         />
 
-        {/* ============================
-            Protected Routes
-        ============================ */}
-
-        {/* Dashboard requires authentication */}
+        {/* Protected dashboard route */}
         <Route
           path="/dashboard"
           element={
@@ -51,7 +39,7 @@ function AppRoutes() {
           }
         />
 
-        {/* Tasks requires authentication */}
+        {/* Protected tasks route */}
         <Route
           path="/tasks"
           element={
@@ -61,18 +49,23 @@ function AppRoutes() {
           }
         />
 
-        {/* ============================
-            Unknown Routes
-        ============================ */}
+        {/* Protected users route */}
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UserPage />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Any URL that does not match above */}
+        {/* Handle unknown URLs */}
         <Route
           path="*"
           element={<NotFoundPage />}
         />
 
       </Routes>
-
     </BrowserRouter>
   )
 }

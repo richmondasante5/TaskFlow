@@ -1,11 +1,52 @@
 import API from '../config/axios.js'
 
-// Get all users from backend
-// Only ADMIN can access this endpoint based on the Security rules
+// Create a new user
+export const createUser = async (userData, token) => {
+
+  return await API.post('/users', userData, {
+    headers: {
+      // Send JWT so the backend can authenticate the request
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+}
+
+
+// Get all users
 export const getAllUsers = async (token) => {
+
   return await API.get('/users', {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
+      // Send JWT so the backend can authenticate the request
+      Authorization: `Bearer ${token}`
+    }
   })
+
+}
+
+
+// Update an existing user
+export const updateUserData = async (userId, userData, token) => {
+
+  return await API.put(`/users/${userId}`, userData, {
+    headers: {
+      // Send JWT so the backend can authenticate the request
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+}
+
+
+// Delete a user
+export const deleteUser = async (userId, token) => {
+
+  return await API.delete(`/users/${userId}`, {
+    headers: {
+      // Send JWT so the backend can authenticate the request
+      Authorization: `Bearer ${token}`
+    }
+  })
+
 }
