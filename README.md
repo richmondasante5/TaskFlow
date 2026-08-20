@@ -1,18 +1,20 @@
 # TaskFlow
 
-TaskFlow is a secure, full-stack task management application built with Java, Spring Boot, React, and PostgreSQL. It provides role-based task management through REST APIs and is deployed to Microsoft Azure using Docker and modern cloud deployment practices.
+TaskFlow is a secure, full-stack task management application built with Java, Spring Boot, React, and PostgreSQL. It enables users to create, assign, track, and manage tasks through a responsive web interface backed by secure REST APIs.
+
+The application is deployed to Microsoft Azure, with a containerized Spring Boot backend, a cloud-hosted PostgreSQL database, and automated CI/CD using GitHub Actions.
 
 ## Features
 
-- User registration and authentication
-- JWT-based authentication and authorization
+- User authentication with JWT
 - Role-Based Access Control (RBAC)
-- Task creation, assignment, and management
+- Secure and protected REST API endpoints
+- Task creation, assignment, updating, and deletion
 - Task status tracking
-- Secure REST APIs
-- PostgreSQL database integration
-- Protected frontend routes
+- Protected React routes
+- PostgreSQL database persistence
 - Responsive React interface
+- Error handling for API operations
 
 ## Tech Stack
 
@@ -23,7 +25,7 @@ TaskFlow is a secure, full-stack task management application built with Java, Sp
 - Spring Security
 - Spring Data JPA
 - REST APIs
-- JWT
+- JWT Authentication
 - PostgreSQL
 
 ### Frontend
@@ -42,7 +44,7 @@ TaskFlow is a secure, full-stack task management application built with Java, Sp
 - Azure Container Registry (ACR)
 - Azure Static Web Apps
 - Azure Managed Identity
-- Azure Role-Based Access Control (RBAC)
+- Azure Role-Based Access Control
 - GitHub Actions
 - CI/CD
 - Git
@@ -51,12 +53,59 @@ TaskFlow is a secure, full-stack task management application built with Java, Sp
 ## Architecture
 
 ```text
+                 React Frontend
+                       |
+                       | HTTPS / REST API
+                       v
+                Spring Boot Backend
+                       |
+              Spring Security / JWT
+                       |
+                       v
+                Spring Data JPA
+                       |
+                       v
+                  PostgreSQL
+```
+
+## Security
+
+TaskFlow uses Spring Security and JWT-based authentication to protect backend resources. Authenticated requests include a JWT access token, while role-based authorization controls access to protected application functionality.
+
+The React frontend uses protected routes to prevent unauthenticated access to secured pages.
+
+## Deployment
+
+TaskFlow is deployed using Microsoft Azure cloud services:
+
+```text
+GitHub
+   |
+   | GitHub Actions
+   v
+Docker Build
+   |
+   v
+Azure Container Registry
+   |
+   v
+Azure App Service
+   |
+   v
+Spring Boot API
+
 React Frontend
-      |
-      | HTTP / REST API
-      v
-Spring Boot Backend
-      |
-      | Spring Data JPA
-      v
-PostgreSQL Database
+   |
+   v
+Azure Static Web Apps
+```
+
+The deployment pipeline automatically builds and deploys application changes through GitHub Actions.
+
+## Application Screenshots
+
+Screenshots of the deployed application will be added as development continues.
+
+## Current Development
+
+User Management is currently being implemented to provide administrative functionality for viewing and managing application users.
