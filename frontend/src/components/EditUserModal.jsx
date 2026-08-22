@@ -1,4 +1,8 @@
 function EditUserModal({
+  editFirstName,
+  setEditFirstName,
+  editLastName,
+  setEditLastName,
   editEmail,
   setEditEmail,
   editRole,
@@ -9,20 +13,59 @@ function EditUserModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
 
-        <div className="border-b border-gray-200 px-6 py-5">
+        {/* Header */}
+        <div className="shrink-0 border-b border-gray-200 px-6 py-5">
+
           <h2 className="text-xl font-bold text-gray-900">
             Edit User
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Update the user's email or role.
+            Update the user's account information.
           </p>
+
         </div>
 
-        <div className="space-y-5 px-6 py-6">
+        {/* Form fields */}
+        <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
 
+          {/* First name */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              First Name
+            </label>
+
+            <input
+              type="text"
+              value={editFirstName}
+              onChange={(event) =>
+                setEditFirstName(event.target.value)
+              }
+              required
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          {/* Last name */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Last Name
+            </label>
+
+            <input
+              type="text"
+              value={editLastName}
+              onChange={(event) =>
+                setEditLastName(event.target.value)
+              }
+              required
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          {/* Email */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Email
@@ -31,12 +74,15 @@ function EditUserModal({
             <input
               type="email"
               value={editEmail}
-              onChange={(event) => setEditEmail(event.target.value)}
+              onChange={(event) =>
+                setEditEmail(event.target.value)
+              }
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
+          {/* Role */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Role
@@ -44,24 +90,38 @@ function EditUserModal({
 
             <select
               value={editRole}
-              onChange={(event) => setEditRole(event.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              onChange={(event) =>
+                setEditRole(event.target.value)
+              }
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
-              <option value="USER">User</option>
-              <option value="DEVELOPER">Developer</option>
-              <option value="MANAGER">Manager</option>
-              <option value="ADMIN">Admin</option>
+              <option value="USER">
+                User
+              </option>
+
+              <option value="DEVELOPER">
+                Developer
+              </option>
+
+              <option value="MANAGER">
+                Manager
+              </option>
+
+              <option value="ADMIN">
+                Admin
+              </option>
             </select>
           </div>
 
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+        {/* Actions */}
+        <div className="flex shrink-0 justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
 
           <button
             type="button"
             onClick={handleCancelEdit}
-            className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
           >
             Cancel
           </button>
@@ -69,7 +129,7 @@ function EditUserModal({
           <button
             type="button"
             onClick={handleUpdateUser}
-            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
           >
             Save Changes
           </button>
@@ -77,6 +137,7 @@ function EditUserModal({
         </div>
 
       </div>
+
     </div>
   )
 }
