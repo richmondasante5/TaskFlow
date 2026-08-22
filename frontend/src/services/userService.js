@@ -49,4 +49,9 @@ export const deleteUser = async (userId, token) => {
     }
   })
 
+  //function for user login
+  export const loginUser = async(userData) =>{
+    return await API.post('/users/login', userData)
+  }
+
 }
