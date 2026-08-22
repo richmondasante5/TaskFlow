@@ -20,19 +20,21 @@ function UserPage() {
   // User list
   const [users, setUsers] = useState([])
 
-  // Create user form
+  // Create user form state
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [userRole, setUserRole] = useState('USER')
 
-  // Selected user for editing
+  // User currently being edited
   const [editingUser, setEditingUser] = useState(null)
 
-  // Edit user form
+  // Edit user form state
   const [editFirstName, setEditFirstName] = useState('')
   const [editLastName, setEditLastName] = useState('')
+  const [editPhone, setEditPhone] = useState('')
   const [editEmail, setEditEmail] = useState('')
   const [editRole, setEditRole] = useState('USER')
 
@@ -82,6 +84,7 @@ function UserPage() {
       const userData = {
         firstName,
         lastName,
+        phone,
         email,
         password,
         role: userRole,
@@ -92,26 +95,34 @@ function UserPage() {
       // Clear form after successful creation
       setFirstName('')
       setLastName('')
+      setPhone('')
       setEmail('')
       setPassword('')
       setUserRole('USER')
 
-      // Refresh users
+      // Refresh user list
       await loadUsers()
 
     } catch (error) {
-      console.error('Failed to create user:', error)
+      console.error(
+        'Failed to create user:',
+        error.response?.data || error
+      )
 
-      setErrorMsg('Unable to create user.')
+      setErrorMsg(
+        error.response?.data?.message ||
+        'Unable to create user.'
+      )
     }
   }
 
-  // Open edit modal and load selected user's current values
+  // Open edit modal with current user information
   const handleEditClick = (user) => {
     setEditingUser(user)
 
     setEditFirstName(user.firstName ?? '')
     setEditLastName(user.lastName ?? '')
+    setEditPhone(user.phone ?? '')
     setEditEmail(user.email ?? '')
     setEditRole(user.role ?? 'USER')
   }
@@ -122,6 +133,7 @@ function UserPage() {
 
     setEditFirstName('')
     setEditLastName('')
+    setEditPhone('')
     setEditEmail('')
     setEditRole('USER')
   }
@@ -136,6 +148,7 @@ function UserPage() {
       const updatedUser = {
         firstName: editFirstName,
         lastName: editLastName,
+        phone: editPhone,
         email: editEmail,
         role: editRole,
       }
@@ -151,7 +164,10 @@ function UserPage() {
       await loadUsers()
 
     } catch (error) {
-      console.error('Failed to update user:', error)
+      console.error(
+        'Failed to update user:',
+        error.response?.data || error
+      )
 
       setErrorMsg('Unable to update user.')
     }
@@ -173,13 +189,16 @@ function UserPage() {
       await loadUsers()
 
     } catch (error) {
-      console.error('Failed to delete user:', error)
+      console.error(
+        'Failed to delete user:',
+        error.response?.data || error
+      )
 
       setErrorMsg('Unable to delete user.')
     }
   }
 
-  // Prevent non-admin users from using the management page
+  // Block non-admin users from User Management
   if (role !== 'ADMIN') {
     return (
       <>
@@ -236,6 +255,8 @@ function UserPage() {
             setFirstName={setFirstName}
             lastName={lastName}
             setLastName={setLastName}
+            phone={phone}
+            setPhone={setPhone}
             email={email}
             setEmail={setEmail}
             password={password}
@@ -290,6 +311,10 @@ function UserPage() {
                     </th>
 
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-gray-500">
+                      Phone
+                    </th>
+
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-gray-500">
                       Email
                     </th>
 
@@ -318,6 +343,10 @@ function UserPage() {
 
                       <td className="whitespace-nowrap px-6 py-5 text-sm text-gray-900">
                         {user.lastName || '-'}
+                      </td>
+
+                      <td className="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
+                        {user.phone || '-'}
                       </td>
 
                       <td className="whitespace-nowrap px-6 py-5 text-sm font-medium text-gray-900">
@@ -372,6 +401,8 @@ function UserPage() {
             setEditFirstName={setEditFirstName}
             editLastName={editLastName}
             setEditLastName={setEditLastName}
+            editPhone={editPhone}
+            setEditPhone={setEditPhone}
             editEmail={editEmail}
             setEditEmail={setEditEmail}
             editRole={editRole}

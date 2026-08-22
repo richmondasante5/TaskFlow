@@ -3,6 +3,8 @@ function EditUserModal({
   setEditFirstName,
   editLastName,
   setEditLastName,
+  editPhone,
+  setEditPhone,
   editEmail,
   setEditEmail,
   editRole,
@@ -65,6 +67,29 @@ function EditUserModal({
             />
           </div>
 
+          {/* Phone */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+
+            <input
+              type="tel"
+              value={editPhone}
+              onChange={(event) =>
+                setEditPhone(event.target.value)
+              }
+              pattern="[0-9]+"
+              inputMode="numeric"
+              required
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+            <p className="mt-1 text-xs text-gray-500">
+              Enter digits only.
+            </p>
+          </div>
+
           {/* Email */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -95,21 +120,10 @@ function EditUserModal({
               }
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
-              <option value="USER">
-                User
-              </option>
-
-              <option value="DEVELOPER">
-                Developer
-              </option>
-
-              <option value="MANAGER">
-                Manager
-              </option>
-
-              <option value="ADMIN">
-                Admin
-              </option>
+              <option value="USER">User</option>
+              <option value="DEVELOPER">Developer</option>
+              <option value="MANAGER">Manager</option>
+              <option value="ADMIN">Admin</option>
             </select>
           </div>
 
