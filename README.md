@@ -17,28 +17,24 @@ The platform provides authenticated task and user management with **JWT authenti
 <img width="367" height="415" alt="image" src="https://github.com/user-attachments/assets/dd939ce8-aad7-49e4-bef5-26099fae187c" />
 
 
-![TaskFlow Login](docs/screenshots/login.png)
 
 ### Dashboard
 
 <img width="950" height="423" alt="image" src="https://github.com/user-attachments/assets/cd9224f7-7e7f-4fc7-adc9-327fdfff45d5" />
 
 
-![TaskFlow Dashboard](docs/screenshots/dashboard.png)
 
 ### Task Management
 
 <img width="953" height="409" alt="image" src="https://github.com/user-attachments/assets/085aaec9-342c-42df-902b-bf9829c269c3" />
 
 
-![TaskFlow Task Management](docs/screenshots/tasks.png)
 
 ### User Management
 
 <img width="945" height="406" alt="image" src="https://github.com/user-attachments/assets/ae2125ae-0058-49f7-8dc1-93bda9f605c4" />
 
 
-![TaskFlow User Management](docs/screenshots/user-management.png)
 
 ---
 
