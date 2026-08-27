@@ -8,6 +8,15 @@ The platform provides authenticated task and user management with **JWT authenti
 
 ---
 
+## 🎥 Application Demo
+
+▶️ [Watch the TaskFlow Demo on YouTube](https://youtu.be/Kd6N09ep9Aw)
+
+A short walkthrough of the deployed application demonstrating authentication, task management, user management, role-based access control, and core application workflows.
+
+---
+
+
 ## Application Preview
 
 > Screenshots below showcase the deployed TaskFlow application.
