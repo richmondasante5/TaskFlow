@@ -81,7 +81,7 @@ public class UserService {
         existingUser.setRole(updatedUser.getRole());
         existingUser.setEmail(updatedUser.getEmail());
 
-        return  userRepository.save(updatedUser);//saving updates
+        return userRepository.save(existingUser); // saving updated existing user
     }
 
     //method for user login/authentication
